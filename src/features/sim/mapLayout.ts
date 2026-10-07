@@ -19,6 +19,9 @@ export const OTHER_R = 76
 /** Where the new cat starts its flight (just off the right edge). */
 export const TEST_START = { x: MAP_W + 40, y: CAT_CENTRE.y }
 
+/** Least distance (map units) between the cat island's edge and the new cat's centre when it is outside. */
+export const OUTSIDE_GAP = 60
+
 /** Cat island radius for a remapped variety (0..1): grows linearly from CAT_R_MIN to CAT_R_MAX. */
 export const catRadius = (variety: number) => CAT_R_MIN + (CAT_R_MAX - CAT_R_MIN) * Math.min(1, Math.max(0, variety))
 
@@ -37,6 +40,8 @@ export type MapLayout = {
   variety: number
   catR: number
   otherR: number
+  /** False when the visitor picked no non-cat examples: the right group is then "never seen these", not an empty "not cat". */
+  otherSeen: boolean
   dots: MapDot[]
   test: MapTest | null
 }
@@ -63,7 +68,10 @@ export function testPosition(id: string, pCat: number, catR: number): MapTest {
   const t = (0.5 - pCat) / 0.5 // < 0 inside, > 0 outside
   const edge = CAT_CENTRE.x + catR
   const otherEdge = OTHER_CENTRE.x - OTHER_R
-  const x = t <= 0 ? edge + t * catR * 0.9 : edge + 14 + t * Math.max(10, otherEdge - edge - 34)
+  // outside: always a clear gap (the dot, its halo and its ring clear the island), then on towards the other group
+  const lo = edge + OUTSIDE_GAP
+  const hi = Math.max(lo + 10, otherEdge - 8)
+  const x = t <= 0 ? edge + t * catR * 0.9 : lo + t * (hi - lo)
   const inside = x <= edge
   const toCat = Math.abs(x - CAT_CENTRE.x) - catR
   const toOther = Math.abs(x - OTHER_CENTRE.x) - OTHER_R
@@ -79,6 +87,7 @@ export function layoutMap(selectionIds: string[], test?: { id: string; pCat: num
     variety,
     catR,
     otherR: OTHER_R,
+    otherSeen: cards.some((c) => c.label === 'notcat'),
     dots: cards.map((c) => dotFor(c, catR)),
     test: test ? testPosition(test.id, test.pCat, catR) : null,
   }

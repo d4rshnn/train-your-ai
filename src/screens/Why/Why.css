@@ -41,42 +41,131 @@
   left: 340px;
   top: 100px;
   width: 978px;
-  height: 600px;
 }
 
 .why__main h2 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: var(--fs-headline);
+  font-size: 48px;
   line-height: 1.08;
 }
 
+/* the visitor's own 10 picks, small, so "these" has something to point at */
+.picks {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.thumb {
+  position: relative;
+  flex: none;
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid rgba(var(--accent-rgb), 0.55);
+  background: var(--bg-2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.thumb.is-notcat {
+  border-color: var(--text-dim);
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.picks__stack {
+  flex: none;
+  margin-right: 14px;
+}
+
+.picks__fan {
+  position: relative;
+  height: 60px;
+}
+
+.picks__fan .thumb {
+  position: absolute;
+  top: 2px;
+}
+
+.picks__label {
+  margin: 6px 0 0;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warn);
+}
+
+.picks__label b {
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+/* text on the left, the big memory map on the right */
+.why__body {
+  display: flex;
+  gap: 28px;
+  margin-top: 14px;
+}
+
+.why__text {
+  flex: none;
+  width: 262px;
+  display: flex;
+  flex-direction: column;
+}
+
+.why__map {
+  flex: none;
+  width: 688px;
+}
+
 .why__sub {
-  margin: 20px 0 0;
-  max-width: 330px;
-  font-size: var(--fs-caption);
-  line-height: 1.3;
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.28;
   color: var(--text-dim);
 }
 
-.why__sub em {
-  font-style: italic;
+.why__analogy {
+  margin: 14px 0 0;
+  font-size: 24px;
+  line-height: 1.28;
+  color: var(--text);
+}
+
+.why__mapcap {
+  margin: 14px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 22px;
+  line-height: 1.25;
   color: var(--text);
 }
 
 /* ---- continue row: a slim bar shows that the screen moves on by itself ---- */
 .why__continue {
-  position: absolute;
-  left: 0;
-  bottom: 0;
+  margin-top: 16px;
   display: flex;
-  align-items: center;
-  gap: 28px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
 }
 
 .why__auto {
-  width: 220px;
+  width: 200px;
   height: 4px;
   border-radius: 2px;
   background: var(--line);
@@ -109,31 +198,9 @@
   color: var(--text-dim);
 }
 
-.why__analogy {
-  max-width: 330px;
-  margin: 22px 0 0;
-  font-size: var(--fs-caption);
-  color: var(--text);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .why__auto i {
     animation: none;
     transform: scaleX(1);
   }
-}
-
-/* the big memory map, centred on the right, with one plain line over it */
-.why__map {
-  position: absolute;
-  left: 778px;
-  top: 250px;
-  width: 540px;
-}
-
-.why__mapcap {
-  margin: 0 0 10px;
-  font-size: 22px;
-  line-height: 1.2;
-  color: var(--text);
 }

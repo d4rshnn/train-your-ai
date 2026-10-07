@@ -59,7 +59,7 @@ export function MemoryMap({ ids, test = null, testDelay = 0, stagger = 0, growAf
           </radialGradient>
         </defs>
 
-        <circle className="map__island map__island--other" cx={OTHER_CENTRE.x} cy={OTHER_CENTRE.y} r={layout.otherR} />
+        <circle className={`map__island map__island--other ${layout.otherSeen ? '' : 'is-unseen'}`} cx={OTHER_CENTRE.x} cy={OTHER_CENTRE.y} r={layout.otherR} />
         <circle className="map__island map__island--cat" cx={CAT_CENTRE.x} cy={CAT_CENTRE.y} style={{ r: catR }} />
         {t ? (
           <circle
@@ -101,6 +101,7 @@ export function MemoryMap({ ids, test = null, testDelay = 0, stagger = 0, growAf
               style={{ animationDelay: `${arrive}s` }}
             />
             <g transform={`translate(${t.x} ${t.y})`}>
+              <circle className="map__ring" r={DOT_R * 3} style={{ animationDelay: `${arrive}s` }} />
               <g className={`map__test ${t.inside ? 'is-inside' : 'is-outside'}`} style={{ '--fx': `${TEST_START.x - t.x}px`, animationDelay: `${testDelay}s` } as CSSProperties}>
                 <circle className="map__halo" r={DOT_R * 2.3} />
                 <circle className="map__core" r={DOT_R * 1.15} />
@@ -112,11 +113,11 @@ export function MemoryMap({ ids, test = null, testDelay = 0, stagger = 0, growAf
 
       {labels ? (
         <>
-          <span className="map__label" style={{ left: pct(CAT_CENTRE.x, MAP_W), top: pct(MAP_H - 34, MAP_H) }}>
+          <span className="map__label" style={{ left: pct(CAT_CENTRE.x, MAP_W), top: pct(MAP_H - 52, MAP_H) }}>
             Cat
           </span>
-          <span className="map__label" style={{ left: pct(OTHER_CENTRE.x, MAP_W), top: pct(MAP_H - 34, MAP_H) }}>
-            Not cat
+          <span className={`map__label ${layout.otherSeen ? '' : 'is-unseen'}`} style={{ left: pct(OTHER_CENTRE.x, MAP_W), top: pct(MAP_H - 52, MAP_H) }}>
+            {layout.otherSeen ? 'Not cat' : 'Never seen these'}
           </span>
         </>
       ) : null}

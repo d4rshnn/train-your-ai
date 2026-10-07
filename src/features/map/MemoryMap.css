@@ -32,6 +32,23 @@
 }
 
 /* the island the new cat landed next to pulses once */
+/* nothing of this kind was picked: the group is faint, not an unexplained empty circle */
+.map__island--other.is-unseen {
+  fill: none;
+  stroke: rgba(154, 167, 160, 0.28);
+  stroke-dasharray: 3 8;
+}
+
+/* a faint dashed ring: this picture has not been seen before */
+.map__ring {
+  fill: none;
+  stroke: rgba(242, 245, 243, 0.45);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 6;
+  opacity: 0;
+  animation: map-text 500ms var(--ease-out) forwards;
+}
+
 .map__pulse {
   fill: none;
   stroke: var(--accent);
@@ -194,6 +211,12 @@
   color: var(--text-dim);
 }
 
+.map__label.is-unseen {
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-size: 15px;
+}
+
 .map__new {
   transform: translateX(-50%);
   color: var(--text);
@@ -246,7 +269,8 @@
     opacity: 1;
     stroke-dashoffset: 0;
   }
-  .map__new {
+  .map__new,
+  .map__ring {
     animation: none;
     opacity: 1;
   }

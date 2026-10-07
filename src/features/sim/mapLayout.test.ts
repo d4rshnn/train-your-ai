@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { TRAINING_EXAMPLES } from '../../data/examples'
 import { mulberry32 } from '../../util/rand'
 import { buildAlternate } from './alternate'
-import { catRadius, CAT_CENTRE, CAT_R_MAX, CAT_R_MIN, layoutMap, MAP_H, MAP_W, OTHER_CENTRE, OTHER_R, testPosition } from './mapLayout'
+import { catRadius, CAT_CENTRE, CAT_R_MAX, CAT_R_MIN, layoutMap, MAP_H, MAP_W, OTHER_CENTRE, OTHER_R, OUTSIDE_GAP, testPosition } from './mapLayout'
 import { GOOD_SET, worstAchievableSet } from './presets'
 import { simulate } from './predict'
 
@@ -39,6 +39,25 @@ describe('memory map layout', () => {
     expect(good.catR).toBeGreaterThan(weak.catR + 20)
     expect(good.test!.inside).toBe(true)
     expect(dist(good.test!, CAT_CENTRE)).toBeLessThanOrEqual(good.catR)
+  })
+
+  it('shows a clear gap between the island and the new cat whenever it is outside', () => {
+    for (const ids of [WORST, GOOD_SET]) for (const p of [0.02, 0.2, 0.4, 0.49, 0.499]) {
+      for (const catR of [CAT_R_MIN, 80, CAT_R_MAX]) {
+        const t = testPosition('test-01', p, catR)
+        expect(t.inside).toBe(false)
+        expect(t.x - (CAT_CENTRE.x + catR)).toBeGreaterThanOrEqual(OUTSIDE_GAP)
+        expect(t.x).toBeLessThan(OTHER_CENTRE.x) // still short of the middle of the other group
+      }
+      expect(ids.length).toBe(10)
+    }
+    expect(map(WORST).test!.x - (CAT_CENTRE.x + map(WORST).catR)).toBeGreaterThanOrEqual(OUTSIDE_GAP)
+  })
+
+  it('knows whether any non-cat example was picked', () => {
+    expect(layoutMap(WORST).otherSeen).toBe(false) // the weakest pick is all cats
+    expect(layoutMap(['train-01', 'train-17']).otherSeen).toBe(true)
+    expect(layoutMap([]).otherSeen).toBe(false)
   })
 
   it('the island radius follows the remapped variety', () => {

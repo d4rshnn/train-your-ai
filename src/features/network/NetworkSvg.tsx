@@ -9,7 +9,7 @@ export const NetworkSvg = memo(function NetworkSvg({ layout }: { layout: Layout 
   const { width, height, nodes, edges } = layout
   const lastLayer = LAYERS.length - 1
   return (
-    <svg className="net__svg" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Conceptual neural network diagram">
+    <svg className="net__svg" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Conceptual picture of the AI's brain">
       <defs>
         {/* edges fade in from the left so the network reads as a flow, not a grid */}
         <linearGradient id="net-edge" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={width} y2="0">

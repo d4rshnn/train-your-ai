@@ -51,8 +51,9 @@ describe('copy audit', () => {
     expect(read('app/App.tsx')).toMatch(/<Footer note=\{FOOTER_NOTE\}/) // on every screen, attract included
     expect(read('features/network/Network.tsx')).toContain('Conceptual view')
     expect(read('screens/WhatAiKnows/WhatAiKnows.tsx')).toContain('Simplified view')
-    expect(read('screens/Test/Test.tsx')).toContain('Simulated prediction')
-    expect(read('screens/Accuracy/Accuracy.tsx')).toContain('Simulated')
+    expect(read('screens/Test/Test.tsx')).toContain('How sure (simulated)')
+    expect(read('screens/WhatIf/WhatIf.tsx')).toContain('Simulated')
+    expect(read('screens/WhatIf/WhatIf.tsx')).toContain('How sure it was about the new cat (simulated)')
     expect(read('features/payoff/content.ts')).toContain('This was a visual simulation.')
   })
 })

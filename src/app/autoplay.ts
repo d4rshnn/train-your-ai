@@ -1,4 +1,4 @@
-import { GOOD_SET, worstAchievableSet } from '../features/sim/fixtures'
+import { worstAchievableSet } from '../features/sim/presets'
 
 /** ?autoplay runs the whole story by itself; ?autoplay&once plays one cycle and stops on the payoff (for recording). */
 export function parseAutoplay(search: string): { enabled: boolean; once: boolean; fast: boolean } {
@@ -7,20 +7,18 @@ export function parseAutoplay(search: string): { enabled: boolean; once: boolean
 }
 
 /**
- * Pauses (ms) between the scripted actions. The screens keep their own animations and auto-advance timers; these are
- * only the extra dwell times a person would spend reading, plus the pick pace. Tuned so one cycle is ~3 to 3.5 minutes.
+ * Pauses (ms) between the scripted actions. The screens keep their own animations and auto-advance timers (training,
+ * test, why and the what-if replay move on by themselves); these are only the extra dwell times a person would spend
+ * reading, plus the pick pace. PLAN_V2 target: one cycle of about 2 minutes.
  */
 export const TIMING = {
-  attract: 28_000, // S1 on screen before START
-  explainerHold: 13_000, // S2 after the last caption appears, before CHOOSE EXAMPLES
-  prePick: 8_000, // S3 before the first card (read the screen)
+  attract: 24_000, // S1 on screen before START
+  explainerHold: 8_000, // S2 after the last caption appears, before CHOOSE EXAMPLES
+  prePick: 7_000, // Choose: before the first card (read the screen)
   pick: 400, // between cards flying into the tray
-  prePickRound2: 8_000,
-  swap: 800, // between swaps in round 2 (remove / add)
-  prePlay: 6_000, // tray full, before TRAIN
-  struggleHold: 30_000, // S6 reading time
-  accuracyHold: 26_000, // S7 after the count-up, before CONTINUE
-  payoffHold: 6_000, // S8 final state before looping (plan: hold ~6 s)
+  prePlay: 4_000, // tray full, before TRAIN
+  compareHold: 8_000, // What if: after the side-by-side has counted up, before CONTINUE
+  payoffHold: 6_000, // Payoff final state before looping (plan: hold ~6 s)
 } as const
 
 export type Timing = { [K in keyof typeof TIMING]: number }
@@ -79,28 +77,23 @@ async function pickCard(id: string, signal: AbortSignal) {
   ;(await waitFor(`.card[data-id="${id}"]`, signal)).click()
 }
 
-export function swapPlan(from: string[], to: string[]): { remove: string[]; add: string[] } {
-  return { remove: from.filter((id) => !to.includes(id)), add: to.filter((id) => !from.includes(id)) }
-}
-
 /** Run the scripted visitor. Resolves after a ?once cycle; otherwise loops until aborted. */
 export async function runAutoplay({ once, signal, timing = TIMING, onFinished }: AutoplayOptions): Promise<void> {
   const worst = worstAchievableSet()
-  const good = GOOD_SET
   const t = timing
   try {
     for (;;) {
-      // S1 Attract
+      // Attract
       await waitFor('.attract__start', signal)
       await sleep(t.attract, signal)
       await press('.attract__start', signal)
 
-      // S2 What does the AI know? (its own steps advance by themselves, then the button appears)
+      // What does the AI know? (its own steps advance by themselves, then the button appears)
       await waitFor('.wak__cta', signal)
       await sleep(t.explainerHold, signal)
       await press('.wak__cta', signal)
 
-      // S3 Round 1: the worst achievable set, one card at a time
+      // Choose: the one and only pick. The worst achievable set, so the story shows the struggle and then the what-if.
       await waitFor('.choose__grid', signal)
       await sleep(t.prePick, signal)
       for (const id of worst) {
@@ -110,32 +103,12 @@ export async function runAutoplay({ once, signal, timing = TIMING, onFinished }:
       await sleep(t.prePlay, signal)
       await press('.choose__train', signal)
 
-      // S4 Training and S5 Test run on their own; S6 Struggle
-      await waitFor('.struggle__cta', signal, 90_000)
-      await sleep(t.struggleHold, signal)
-      await press('.struggle__cta', signal)
+      // Training, Test and Why move on by themselves; the what-if replay then shows the side-by-side and CONTINUE
+      await waitFor('.whatif__continue', signal, 150_000)
+      await sleep(t.compareHold, signal)
+      await press('.whatif__continue', signal)
 
-      // S3 Round 2: the Round-1 picks are visibly swapped for the good set
-      await waitFor('.choose__grid', signal)
-      await sleep(t.prePickRound2, signal)
-      const { remove, add } = swapPlan(worst, good)
-      for (const id of remove) {
-        await pickCard(id, signal) // clicking a selected card takes it out of the tray
-        await sleep(t.swap, signal)
-      }
-      for (const id of add) {
-        await pickCard(id, signal)
-        await sleep(t.swap, signal)
-      }
-      await sleep(t.prePlay, signal)
-      await press('.choose__train', signal)
-
-      // S4, S5, then S7 Accuracy: wait for the count-up and the comparison, then CONTINUE
-      await waitFor('.accuracy__after.is-on', signal, 90_000)
-      await sleep(t.accuracyHold, signal)
-      await press('.accuracy__cta', signal)
-
-      // S8 Payoff: hold on the finished state
+      // Payoff: hold on the finished state
       await waitFor('.payoff__restart.is-on', signal)
       await sleep(t.payoffHold, signal)
       if (once) {

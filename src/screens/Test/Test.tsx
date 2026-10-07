@@ -1,25 +1,31 @@
-import { useEffect, useMemo, useRef, useState, type Dispatch, type MutableRefObject } from 'react'
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { TEST_EXAMPLES } from '../../data/examples'
 import { CatIcon } from '../../components/CatIcon'
 import { Card } from '../../features/cards/Card'
 import type { NetworkEngine } from '../../features/network/engine'
 import { displayPercents, OUTPUTS, planInference } from '../../features/network/inference'
-import { CAPTION_DONE, CAPTION_NEW, startTestSequence, TEST_CARD } from '../../features/network/testSequence'
+import { CAPTION_NEW, startTestSequence, sureCaption, TEST_CARD } from '../../features/network/testSequence'
 import type { Sequence } from '../../features/network/trainingSequence'
 import type { SimResult } from '../../features/sim/types'
-import type { Action, Round } from '../../state/machine'
-import { ROUND_SPEED } from '../Training/Training'
 import './Test.css'
 
 const HERO = TEST_EXAMPLES[0]
+const GUESS_WORD = { cat: 'cat', dog: 'dog', other: 'something else' } as const
 /** Real time to let the verdict sink in before moving on (a tap moves on at once). */
 const HOLD_MS = 2200
 const HOLD_AFTER_SKIP_MS = 1000
 const SKIP_AFTER_MS = 1500
+const CONDENSED_HOLD_MS = 700
 
-type Props = { round: Round; result: SimResult; dispatch: Dispatch<Action>; engineRef: MutableRefObject<NetworkEngine | null> }
+type Props = {
+  result: SimResult
+  /** 1 for the visitor's own run; 2 for the what-if replay. */
+  speed?: number
+  onDone: () => void
+  engineRef: MutableRefObject<NetworkEngine | null>
+}
 
-export function Test({ round, result, dispatch, engineRef }: Props) {
+export function Test({ result, speed = 1, onDone, engineRef }: Props) {
   const prediction = result.featured
   const percents = useMemo(() => displayPercents(prediction.probs), [prediction])
   const [caption, setCaption] = useState<'new' | 'done'>('new')
@@ -37,7 +43,7 @@ export function Test({ round, result, dispatch, engineRef }: Props) {
     if (advanced.current) return
     advanced.current = true
     window.clearTimeout(timer.current)
-    dispatch({ type: 'ANIM_DONE', stage: 'test' })
+    onDone()
   }
 
   useEffect(() => {
@@ -48,7 +54,7 @@ export function Test({ round, result, dispatch, engineRef }: Props) {
       engine,
       plan: planInference(engine.layout, HERO, prediction),
       prediction,
-      speed: ROUND_SPEED[round],
+      speed,
       ui: {
         card: cardRef.current,
         setCaption,
@@ -63,7 +69,7 @@ export function Test({ round, result, dispatch, engineRef }: Props) {
         showVerdict: () => setVerdictOn(true),
         onSettled: () => {
           window.clearTimeout(timer.current)
-          timer.current = window.setTimeout(advance, (seq.current?.skipped ?? true) ? HOLD_AFTER_SKIP_MS : HOLD_MS)
+          timer.current = window.setTimeout(advance, (seq.current?.skipped ?? true) ? HOLD_AFTER_SKIP_MS : speed > 1 ? CONDENSED_HOLD_MS : HOLD_MS)
         },
       },
     })
@@ -75,7 +81,7 @@ export function Test({ round, result, dispatch, engineRef }: Props) {
       sequence.dispose()
       seq.current = null
     }
-    // started once per mount; round and result are fixed while this screen is shown
+    // started once per mount; the result and speed are fixed while this screen is shown
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -99,11 +105,11 @@ export function Test({ round, result, dispatch, engineRef }: Props) {
       </div>
 
       <p className="test__caption" key={caption}>
-        {caption === 'new' ? CAPTION_NEW : CAPTION_DONE}
+        {caption === 'new' ? CAPTION_NEW : sureCaption(percents[0])}
       </p>
 
       <div className={`test__bars ${barsOn ? 'is-on' : ''}`}>
-        <p className="test__sim">Simulated prediction</p>
+        <p className="test__sim">How sure (simulated)</p>
         {OUTPUTS.map((name, i) => (
           <div className={`bar ${verdictOn && i === winner ? 'is-win' : ''} ${verdictOn && i === winner && !good ? 'is-poor' : ''}`} key={name}>
             <span className="bar__name">{name}</span>
@@ -118,16 +124,11 @@ export function Test({ round, result, dispatch, engineRef }: Props) {
       </div>
 
       <div className={`test__verdict ${verdictOn ? 'is-on' : ''} ${good ? 'is-good' : 'is-poor'}`} role="status">
-        {good ? (
-          <>
-            <CatIcon />
-            <span>
-              {prediction.predicted === 'cat' ? 'Cat' : prediction.predicted} — {percents[winner]}%
-            </span>
-          </>
-        ) : (
-          <span>The model struggled.</span>
-        )}
+        {good ? <CatIcon size={26} /> : null}
+        <span className="verdict__text">
+          <b>{percents[0]}% sure it&apos;s a cat</b>
+          <small>Its guess: {GUESS_WORD[prediction.predicted]}</small>
+        </span>
       </div>
       {skipReady && !verdictOn ? <p className="test__hint">Tap to skip</p> : null}
     </section>

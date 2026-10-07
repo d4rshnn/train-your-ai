@@ -15,9 +15,9 @@ const CAT = TRAINING_EXAMPLES[0]
 export const STEP_MS = 3000
 export const CAPTIONS = [
   'This is a cat. To you, obviously.',
-  'To an AI, it starts as just numbers.',
-  'It has to learn which patterns matter.',
-  'How? By looking at lots of examples.',
+  'To an AI, a picture starts as just numbers.',
+  'It has to find patterns.',
+  'Like a kid who has only ever met white cats.',
 ] as const
 
 /** Stage geometry (px). The card starts big and centred, then collapses to the left of the network. */
@@ -198,7 +198,7 @@ export function WhatAiKnows({ dispatch, engineRef, onNetworkHidden }: Props) {
 
       <p className={`wak__tag ${step >= 1 ? 'is-on' : ''}`}>Simplified view</p>
 
-      <p className="wak__caption" key={step} role="status">
+      <p className={`wak__caption ${step >= 2 ? 'is-left' : ''}`} key={step} role="status">
         {CAPTIONS[step]}
       </p>
 

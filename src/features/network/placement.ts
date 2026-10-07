@@ -25,9 +25,10 @@ export function placeFor(screen: Screen): NetPlace {
       return 'side'
     case 'training':
     case 'test':
+    case 'whatIf': // the replay shows the network; the side-by-side hides it (the screen asks for that itself)
       return 'hero'
     default:
-      // choose, struggle, accuracy, payoff: the network steps aside
+      // choose, why, payoff: the network steps aside
       return 'hidden'
   }
 }

@@ -201,3 +201,10 @@
     transition: none;
   }
 }
+
+/* once the network is back on the right, keep the caption clear of its legend */
+.wak__caption.is-left {
+  left: var(--safe);
+  right: 520px;
+  text-align: left;
+}

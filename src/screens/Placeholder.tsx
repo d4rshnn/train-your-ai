@@ -8,8 +8,8 @@ const TITLES: Record<Screen, string> = {
   choose: 'Choose examples',
   training: 'Training',
   test: 'Test and predict',
-  struggle: 'Struggle and improve',
-  accuracy: 'Accuracy',
+  why: 'Why?',
+  whatIf: 'What if',
   payoff: 'Payoff',
 }
 

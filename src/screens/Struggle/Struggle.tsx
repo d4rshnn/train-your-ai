@@ -23,7 +23,8 @@ function Mini({ card, style }: { card: Example; style?: React.CSSProperties }) {
   )
 }
 
-/** S6. Poor result: "It didn't see enough variety." Good-first variant: "Nice, that was a great mix." */
+/** UNUSED since PLAN_V2 Step A: the Why screen replaced it. Kept (not deleted) until removal is approved.
+ * S6. Poor result: "It didn't see enough variety." Good-first variant: "Nice, that was a great mix." */
 export function Struggle({ selection, result, dispatch }: Props) {
   const cards = useMemo(() => resolveSelection(selection), [selection])
   const { stacks, singles } = useMemo(() => similarGroups(cards), [cards])
@@ -86,7 +87,7 @@ export function Struggle({ selection, result, dispatch }: Props) {
           ))}
         </div>
 
-        <Button className="struggle__cta" onClick={() => dispatch({ type: 'IMPROVE' })}>
+        <Button className="struggle__cta" onClick={() => dispatch({ type: 'ADVANCE' })}>
           {good ? 'Break it on purpose' : 'Improve training data'}
         </Button>
       </div>

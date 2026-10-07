@@ -1,21 +1,21 @@
 import { useEffect, useState, type Dispatch, type MutableRefObject } from 'react'
 import type { NetworkEngine } from '../network/engine'
-import { GOOD_SET, worstAchievableSet } from '../sim/fixtures'
-import type { Action, Round, Screen } from '../../state/machine'
+import { GOOD_SET, worstAchievableSet } from '../sim/presets'
+import type { Action, Screen } from '../../state/machine'
 import './DevPanel.css'
 
-type Props = { dispatch: Dispatch<Action>; engineRef: MutableRefObject<NetworkEngine | null>; screen: Screen; round: Round }
+type Props = { dispatch: Dispatch<Action>; engineRef: MutableRefObject<NetworkEngine | null>; screen: Screen }
 
 const WORST = worstAchievableSet()
-const TARGETS = ['Training R1', 'Test R1', 'Struggle', 'Training R2', 'Test R2', 'Accuracy'] as const
+const TARGETS = ['Training', 'Test', 'Why', 'What if', 'Payoff'] as const
+type Target = (typeof TARGETS)[number]
 
-/** Dev-only (?dev): jump straight into training with preset selections to compare the two end states. */
-export default function DevPanel({ dispatch, engineRef, screen, round }: Props) {
+/** Dev-only (?dev): pick a preset and either watch it play from Training or jump straight to a later screen. */
+export default function DevPanel({ dispatch, engineRef, screen }: Props) {
   const [stats, setStats] = useState('')
   const [stress, setStress] = useState(false)
-  const [target, setTarget] = useState<(typeof TARGETS)[number]>('Test R1')
-  const [preset1, setPreset1] = useState<'worst' | 'good'>('worst')
-  const [preset2, setPreset2] = useState<'worst' | 'good'>('good')
+  const [target, setTarget] = useState<Target>('Why')
+  const [preset, setPreset] = useState<'worst' | 'good'>('worst')
 
   useEffect(() => {
     const t = window.setInterval(() => {
@@ -25,46 +25,26 @@ export default function DevPanel({ dispatch, engineRef, screen, round }: Props) 
     return () => window.clearInterval(t)
   }, [engineRef])
 
-  const pick = (ids: string[]) => ids.forEach((id) => dispatch({ type: 'TOGGLE_CARD', id }))
-  const start = () => {
+  /** From anywhere: reset, pass the intro screens, fill the tray with the preset and (optionally) start the run. */
+  const pick = (ids: string[], andTrain: boolean) => {
     dispatch({ type: 'RESTART' })
     dispatch({ type: 'START' })
     dispatch({ type: 'ADVANCE' })
-  }
-  const round1 = (ids: string[]) => {
-    start()
-    pick(ids)
-    dispatch({ type: 'TRAIN' })
-  }
-  /** Round 1 with the worst set is played through instantly, then Round 2 starts from those picks. */
-  const round2 = (ids: string[]) => {
-    round1(WORST)
-    dispatch({ type: 'ANIM_DONE', stage: 'training' })
-    dispatch({ type: 'ANIM_DONE', stage: 'test' })
-    dispatch({ type: 'IMPROVE' })
-    dispatch({ type: 'CLEAR' })
-    pick(ids)
-    dispatch({ type: 'TRAIN' })
+    ids.forEach((id) => dispatch({ type: 'TOGGLE_CARD', id }))
+    if (andTrain) dispatch({ type: 'TRAIN' })
   }
 
-  /** Jump straight to a screen by playing the earlier steps instantly (Round 2 picks only matter for the later targets). */
+  /** Jump to a screen by playing the earlier steps instantly. */
   const jump = () => {
-    const r1 = preset1 === 'worst' ? WORST : GOOD_SET
-    const r2 = preset2 === 'worst' ? WORST : GOOD_SET
-    round1(r1)
-    if (target === 'Training R1') return
+    pick(preset === 'worst' ? WORST : GOOD_SET, true)
+    if (target === 'Training') return
     dispatch({ type: 'ANIM_DONE', stage: 'training' })
-    if (target === 'Test R1') return
+    if (target === 'Test') return
     dispatch({ type: 'ANIM_DONE', stage: 'test' })
-    if (target === 'Struggle') return
-    dispatch({ type: 'IMPROVE' })
-    dispatch({ type: 'CLEAR' })
-    pick(r2)
-    dispatch({ type: 'TRAIN' })
-    if (target === 'Training R2') return
-    dispatch({ type: 'ANIM_DONE', stage: 'training' })
-    if (target === 'Test R2') return
-    dispatch({ type: 'ANIM_DONE', stage: 'test' })
+    if (target === 'Why') return
+    dispatch({ type: 'ADVANCE' })
+    if (target === 'What if') return
+    dispatch({ type: 'ADVANCE' })
   }
 
   const toggleStress = () => {
@@ -79,26 +59,22 @@ export default function DevPanel({ dispatch, engineRef, screen, round }: Props) 
 
   return (
     <div className="dev" role="region" aria-label="Developer panel">
-      <b>DEV</b> <span>{screen} · round {round}</span>
+      <b>DEV</b> <span>{screen}</span>
       <div className="dev__row">
-        <button onClick={() => round1(WORST)}>R1 worst</button>
-        <button onClick={() => round1(GOOD_SET)}>R1 good</button>
-        <button onClick={() => round2(WORST)}>R2 worst</button>
-        <button onClick={() => round2(GOOD_SET)}>R2 good</button>
+        <button onClick={() => pick(WORST, false)}>Pick worst</button>
+        <button onClick={() => pick(GOOD_SET, false)}>Pick good</button>
+        <button onClick={() => pick(WORST, true)}>Pick worst + train</button>
+        <button onClick={() => pick(GOOD_SET, true)}>Pick good + train</button>
       </div>
       <div className="dev__row">
-        <select value={target} onChange={(e) => setTarget(e.target.value as typeof target)}>
+        <select value={target} onChange={(e) => setTarget(e.target.value as Target)} title="Screen to jump to">
           {TARGETS.map((t) => (
             <option key={t}>{t}</option>
           ))}
         </select>
-        <select value={preset1} onChange={(e) => setPreset1(e.target.value as 'worst' | 'good')} title="Round 1 picks">
-          <option value="worst">R1 worst</option>
-          <option value="good">R1 good</option>
-        </select>
-        <select value={preset2} onChange={(e) => setPreset2(e.target.value as 'worst' | 'good')} title="Round 2 picks">
-          <option value="good">R2 good</option>
-          <option value="worst">R2 worst</option>
+        <select value={preset} onChange={(e) => setPreset(e.target.value as 'worst' | 'good')} title="Which picks to jump with">
+          <option value="worst">worst picks</option>
+          <option value="good">good picks</option>
         </select>
         <button onClick={jump}>Jump</button>
       </div>

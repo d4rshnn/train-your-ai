@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type Dispatch, type MutableRefObject } from 'react'
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { getTrayRects } from '../../features/cards/trayHandoff'
 import { imageUrl } from '../../features/cards/images'
 import type { NetworkEngine } from '../../features/network/engine'
@@ -7,25 +7,30 @@ import { planTraining } from '../../features/network/training'
 import { resolveSelection } from '../../features/sim/predict'
 import { varietyScore } from '../../features/sim/score'
 import { visualVariety } from '../../features/sim/visual'
-import type { Action, Round } from '../../state/machine'
 import './Training.css'
 
-/** Round 2 runs at ~70% of the duration: the visitor has seen it already. */
-export const ROUND_SPEED: Record<Round, number> = { 1: 1, 2: 1 / 0.7 }
-/** After MODEL TRAINED appears, wait this long (real time) before moving on; a tap moves on at once. */
+/** After the AI TRAINED stamp appears, wait this long (real time) before moving on; a tap moves on at once. */
 const HOLD_MS = 1500
 const HOLD_AFTER_SKIP_MS = 700
+/** The what-if replay is a condensed (2x) version of this very screen. */
+export const CONDENSED_SPEED = 2
+const CONDENSED_HOLD_MS = 600
 /** Tap-to-skip only becomes available after this much real time. */
 const SKIP_AFTER_MS = 2000
 
 type Props = {
-  round: Round
   selection: string[]
-  dispatch: Dispatch<Action>
+  /** 1 for the visitor's own run; CONDENSED_SPEED for the what-if replay. */
+  speed?: number
+  /** Called once, when the sequence has settled (or the visitor taps through it). */
+  onDone: () => void
   engineRef: MutableRefObject<NetworkEngine | null>
+  /** Cards fly in from the Choose tray. The what-if replay has no tray to fly from. */
+  fromTray?: boolean
 }
 
-export function Training({ round, selection, dispatch, engineRef }: Props) {
+export function Training({ selection, speed = 1, onDone, engineRef, fromTray = true }: Props) {
+  const holdMs = speed > 1 ? CONDENSED_HOLD_MS : HOLD_MS
   const [caption, setCaption] = useState<1 | 2>(1)
   const [chip, setChip] = useState(false)
   const [stamp, setStamp] = useState(false)
@@ -46,7 +51,7 @@ export function Training({ round, selection, dispatch, engineRef }: Props) {
     if (advanced.current) return
     advanced.current = true
     window.clearTimeout(advanceTimer.current)
-    dispatch({ type: 'ANIM_DONE', stage: 'training' })
+    onDone()
   }
 
   useEffect(() => {
@@ -57,8 +62,8 @@ export function Training({ round, selection, dispatch, engineRef }: Props) {
     const sequence = startTrainingSequence({
       engine,
       plan,
-      speed: ROUND_SPEED[round],
-      trayRects: getTrayRects(),
+      speed,
+      trayRects: fromTray ? getTrayRects() : new Map(),
       ui: {
         feed: feedRefs.current,
         docks: docksRef.current!,
@@ -71,7 +76,7 @@ export function Training({ round, selection, dispatch, engineRef }: Props) {
         setStamp,
         onSettled: () => {
           window.clearTimeout(advanceTimer.current)
-          advanceTimer.current = window.setTimeout(advance, (seq.current?.skipped ?? true) ? HOLD_AFTER_SKIP_MS : HOLD_MS)
+          advanceTimer.current = window.setTimeout(advance, (seq.current?.skipped ?? true) ? HOLD_AFTER_SKIP_MS : holdMs)
         },
       },
     })
@@ -83,7 +88,7 @@ export function Training({ round, selection, dispatch, engineRef }: Props) {
       sequence.dispose()
       seq.current = null
     }
-    // the sequence is started once per mount; round/selection are fixed while this screen is shown
+    // the sequence is started once per mount; the selection and speed are fixed while this screen is shown
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -125,7 +130,7 @@ export function Training({ round, selection, dispatch, engineRef }: Props) {
             <circle cx="24" cy="24" r="21" />
             <path d="M14 25l7 7 13-15" />
           </svg>
-          <strong>Model trained</strong>
+          <strong>AI trained</strong>
           <p>It learned patterns from the examples it was given.</p>
         </div>
         {skipReady && !stamp ? <p className="training__hint">Tap to skip</p> : null}

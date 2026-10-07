@@ -9,8 +9,9 @@ import type { Sequence } from './trainingSequence'
 /** Beat times in seconds at 1x (plan section 4, S5). */
 export const TEST_BEAT = { card: 0, shrink: 0.8, shrinkDur: 0.6, burst: 1.1, pulse: 1.4, pulseDur: 1.9, bars: 3.4, barsDur: 1.2, verdict: 4.6, settled: 5.0 } as const
 
-export const CAPTION_NEW = 'A new image the model has never seen.'
-export const CAPTION_DONE = 'It used what it learned to make a prediction on new data.'
+export const CAPTION_NEW = 'A new cat. It has never seen this one.'
+/** "Sure", never "accuracy": how sure the AI is is a different thing from how often it is right. */
+export const sureCaption = (catPercent: number) => `It's ${catPercent}% sure this is a cat.`
 
 /** Where the unseen card rests (stage px). */
 export const TEST_CARD = { x: 1102, y: 150, size: 170 }

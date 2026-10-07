@@ -38,12 +38,12 @@ Add these to the address, for example `http://localhost:5173/?autoplay`. Combine
 
 | URL | What it does |
 |---|---|
-| `?autoplay` | Runs the whole story by itself in a loop, with no input: attract, "What does the AI know?", Round 1 with the worst achievable picks (cards fly into the tray about 0.4 s apart), training, test, struggle, Round 2 (the Round-1 picks are visibly swapped for a good set), training, test, accuracy, payoff, a 6 s hold, then back to the start. It uses the real screens and animations and clicks the real buttons; only the clicks are scripted. One cycle takes about **3 minutes 20 seconds**. **Any real key press or click exits** autoplay and returns to the normal attract screen with a clean state (that click is swallowed, so it does not also press START). The cursor is hidden while it runs and the idle reset is off. |
+| `?autoplay` | Runs the whole story by itself in a loop, with no input: start screen, "What does the AI know?", the one pick (the worst achievable set, cards flying into the tray about 0.4 s apart), training, the new cat's guess, "why", the what-if replay with the better examples side by side, the payoff, a 6 s hold, then back to the start. It uses the real screens and animations and clicks the real buttons; only the clicks are scripted. One cycle takes about **1 minute 55 seconds**. **Any real key press or click exits** autoplay and returns to the normal start screen with a clean state (that click is swallowed, so it does not also press START). The cursor is hidden while it runs and the idle reset is off. |
 | `?autoplay&once` | Plays a single cycle and stops on the payoff screen (for screen recording). The RESTART button still works afterwards. |
 | `?kiosk` | Hides the mouse cursor. (`start-stall.bat` adds it.) |
 | `?quality=low` | Lighter rendering (fewer particles, no node halos, pixel ratio 1). **Remembered on this laptop**, so every later load keeps it. `?quality=high` remembers the full tier; `?quality=auto` forgets the choice. With nothing remembered, a machine with 2 or fewer CPU cores or 2 GB or less of memory starts light, and the app also drops to light by itself if frames are slow. |
 | `?fps` | Shows a small frame-rate readout under the network. |
-| `?dev` | Developer panel (bottom left): jump to any screen with preset picks (worst or good), stress-test the 300-particle cap, toggle quality. |
+| `?dev` | Developer panel (bottom left): pick the worst or the good preset (optionally start training), jump to Training / Test / Why / What if / Payoff, stress-test the 300-particle cap, toggle quality. |
 
 (`?autoplay&fast` shrinks the pauses to a tenth. It exists only to test the loop quickly.)
 Reduced motion: if the computer asks for reduced motion (Windows: Settings, Accessibility, Visual effects, Animation effects off), the animations are skipped and each screen shows its end state.

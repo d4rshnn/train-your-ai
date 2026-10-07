@@ -175,9 +175,7 @@
   border-radius: 16px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 28px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   opacity: 0;
   transform: translateY(8px);
 }
@@ -219,4 +217,29 @@
   .test__caption {
     animation: none;
   }
+}
+
+/* two lines in the verdict banner: how sure it is, and what it guessed */
+.verdict__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-transform: none;
+}
+
+.verdict__text b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  white-space: nowrap;
+}
+
+.verdict__text small {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  white-space: nowrap;
 }

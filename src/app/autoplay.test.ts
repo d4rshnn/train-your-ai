@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GOOD_SET, worstAchievableSet } from '../features/sim/fixtures'
-import { parseAutoplay, scaleTiming, swapPlan, TIMING } from './autoplay'
+import { parseAutoplay, scaleTiming, TIMING } from './autoplay'
 
 describe('autoplay', () => {
   it('parses ?autoplay and ?autoplay&once', () => {
@@ -12,15 +11,8 @@ describe('autoplay', () => {
     expect(parseAutoplay('?autoplay&fast')).toEqual({ enabled: true, once: false, fast: true })
   })
 
-  it('swaps the Round-1 worst picks for the good set: 5 out, 5 in, 5 kept', () => {
-    const worst = worstAchievableSet()
-    const { remove, add } = swapPlan(worst, GOOD_SET)
-    expect(remove).toHaveLength(5)
-    expect(add).toHaveLength(5)
-    // after removing and adding, the tray holds exactly the good set (any order)
-    const after = [...worst.filter((id) => !remove.includes(id)), ...add]
-    expect([...after].sort()).toEqual([...GOOD_SET].sort())
-    expect(after).toHaveLength(10)
+  it('has a single pick: no second-round pauses in the dwell table', () => {
+    expect(Object.keys(TIMING).sort()).toEqual(['attract', 'compareHold', 'explainerHold', 'payoffHold', 'pick', 'prePick', 'prePlay'])
   })
 
   it('picks cards about 0.4 s apart and holds the payoff for about 6 s', () => {

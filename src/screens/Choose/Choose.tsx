@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch } from 'react'
+import { useCallback, useEffect, useRef, useState, type Dispatch } from 'react'
 import { TRAINING_EXAMPLES, type Example } from '../../data/examples'
 import { Button } from '../../components/Button'
 import { Card } from '../../features/cards/Card'
 import { captureTrayRects, recordTrayRects } from '../../features/cards/trayHandoff'
 import { Tray, type FlyRects } from '../../features/cards/Tray'
-import { VarietyMeter } from '../../features/cards/VarietyMeter'
-import { resolveSelection } from '../../features/sim/predict'
-import { TRAY_SIZE, type Action, type Round } from '../../state/machine'
+import { TRAY_SIZE, type Action } from '../../state/machine'
 import { mulberry32 } from '../../util/rand'
 import './Choose.css'
 
@@ -24,9 +22,9 @@ export function gridOrder(examples: Example[], seed = 5): Example[] {
 const GRID = gridOrder(TRAINING_EXAMPLES)
 const NOTICE_MS = 2200
 
-type Props = { round: Round; selection: string[]; dispatch: Dispatch<Action> }
+type Props = { selection: string[]; dispatch: Dispatch<Action> }
 
-export function Choose({ round, selection, dispatch }: Props) {
+export function Choose({ selection, dispatch }: Props) {
   const flyFrom: FlyRects = useRef(new Map())
   const [shakeKey, setShakeKey] = useState(0)
   const [notice, setNotice] = useState('')
@@ -53,11 +51,9 @@ export function Choose({ round, selection, dispatch }: Props) {
     }
   }
 
-  const chosen = useMemo(() => resolveSelection(selection), [selection])
-
   return (
     <section className="choose">
-      <div className="choose__grid" role="group" aria-label="Training examples">
+      <div className="choose__grid" role="group" aria-label="Example photos">
         {GRID.map((ex) => (
           <Card
             key={ex.id}
@@ -70,7 +66,7 @@ export function Choose({ round, selection, dispatch }: Props) {
       </div>
       <div className="choose__panel">
         <h2 className="choose__headline">Choose 10 examples to teach your AI.</h2>
-        <p className="choose__sub">{round === 1 ? 'Each card has a label.' : 'Swap a few. Add more variety.'}</p>
+        <p className="choose__sub">Each card has a label.</p>
 
         <Tray selection={selection} flyFrom={flyFrom} shakeKey={shakeKey} onRemove={(id) => dispatch({ type: 'TOGGLE_CARD', id })} />
 
@@ -86,8 +82,6 @@ export function Choose({ round, selection, dispatch }: Props) {
             Clear
           </Button>
         </div>
-
-        <VarietyMeter cards={chosen} visible={round === 2} />
 
         <Button className="choose__train" onClick={() => {
             recordTrayRects(captureTrayRects())

@@ -62,7 +62,7 @@ export function Network({ width = NET_W, height = NET_H, className = '', onEngin
         <NetworkSvg layout={layout} />
         <ParticleCanvas ref={canvasRef} />
       </div>
-      <figcaption>Conceptual view</figcaption>
+      <figcaption>The AI&apos;s brain, greatly simplified · Conceptual view</figcaption>
       {new URLSearchParams(window.location.search).has('fps') ? <div ref={fpsRef} className="net__fps" /> : null}
     </figure>
   )

@@ -9,17 +9,17 @@ import type { NetworkEngine } from '../features/network/engine'
 import { recordTrayRects } from '../features/cards/trayHandoff'
 import { Network } from '../features/network/Network'
 import { NET_POS, placeFor } from '../features/network/placement'
-import { Accuracy } from '../screens/Accuracy/Accuracy'
 import { Attract } from '../screens/Attract/Attract'
 import { Choose } from '../screens/Choose/Choose'
 import { Payoff } from '../screens/Payoff/Payoff'
 import { Placeholder } from '../screens/Placeholder'
-import { Struggle } from '../screens/Struggle/Struggle'
 import { Test } from '../screens/Test/Test'
 import { Training } from '../screens/Training/Training'
 import { WhatAiKnows } from '../screens/WhatAiKnows/WhatAiKnows'
-import { initialState, reducer, type Action, type Screen } from '../state/machine'
-import { roundOneResult, stepIndex } from '../state/selectors'
+import { WhatIf } from '../screens/WhatIf/WhatIf'
+import { Why } from '../screens/Why/Why'
+import { initialState, reducer } from '../state/machine'
+import { stepIndex } from '../state/selectors'
 import { parseAutoplay, scaleTiming, TIMING } from './autoplay'
 import { IdleOverlay } from './IdleOverlay'
 import { nextIdleStep, useIdleWatcher } from './idle'
@@ -60,10 +60,6 @@ export const FOOTER_NOTE = 'Simulation: the AI here is a conceptual demo.'
 
 /** Operator reset: press R twice within this window, anywhere. */
 const DOUBLE_R_MS = 800
-
-/** Continue buttons for placeholder screens that later sessions replace. */
-const NEXT_ACTION: Partial<Record<Screen, Action>> = {
-}
 
 export function App() {
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -148,9 +144,9 @@ export function App() {
   const start = useCallback(() => dispatch({ type: 'START' }), [])
   const restart = useCallback(() => dispatch({ type: 'RESTART' }), [])
 
-  // S2 keeps the network out of the way until the mosaic streams into it
+  // A screen can ask for the network to step aside for a while (S2 until the mosaic streams in; the what-if side-by-side)
   const [netHidden, setNetHidden] = useState(false)
-  const pos = NET_POS[netHidden && screen === 'whatAiKnows' ? 'hidden' : placeFor(screen)]
+  const pos = NET_POS[netHidden ? 'hidden' : placeFor(screen)]
 
   // Back on the attract screen means everything from the previous visitor is gone. The reducer wiped the React state;
   // this clears the network's learned weights and the remembered tray positions too.
@@ -188,19 +184,27 @@ export function App() {
           ) : screen === 'whatAiKnows' ? (
             <WhatAiKnows dispatch={dispatch} engineRef={engineRef} onNetworkHidden={setNetHidden} />
           ) : screen === 'choose' ? (
-            <Choose round={state.round} selection={state.selections[state.round]} dispatch={dispatch} />
+            <Choose selection={state.selection} dispatch={dispatch} />
           ) : screen === 'training' ? (
-            <Training round={state.round} selection={state.selections[state.round]} dispatch={dispatch} engineRef={engineRef} />
-          ) : screen === 'test' && state.results[state.round] ? (
-            <Test round={state.round} result={state.results[state.round]!} dispatch={dispatch} engineRef={engineRef} />
-          ) : screen === 'struggle' && state.results[1] ? (
-            <Struggle selection={state.selections[1]} result={state.results[1]!} dispatch={dispatch} />
-          ) : screen === 'accuracy' && state.results[2] ? (
-            <Accuracy round1={roundOneResult(state)} round2={state.results[2]!} dispatch={dispatch} />
-          ) : screen === 'payoff' && (state.results[2] ?? state.results[1]) ? (
-            <Payoff selection={state.selections[state.results[2] ? 2 : 1]} result={(state.results[2] ?? state.results[1])!} dispatch={dispatch} />
+            <Training selection={state.selection} onDone={() => dispatch({ type: 'ANIM_DONE', stage: 'training' })} engineRef={engineRef} />
+          ) : screen === 'test' && state.results.yours ? (
+            <Test result={state.results.yours} onDone={() => dispatch({ type: 'ANIM_DONE', stage: 'test' })} engineRef={engineRef} />
+          ) : screen === 'why' && state.results.yours ? (
+            <Why selection={state.selection} yours={state.results.yours} onContinue={() => dispatch({ type: 'ADVANCE' })} />
+          ) : screen === 'whatIf' && state.results.yours && state.results.alternate && state.alternate ? (
+            <WhatIf
+              selection={state.selection}
+              yours={state.results.yours}
+              alternate={state.alternate}
+              other={state.results.alternate}
+              engineRef={engineRef}
+              onNetworkHidden={setNetHidden}
+              onContinue={() => dispatch({ type: 'ADVANCE' })}
+            />
+          ) : screen === 'payoff' && state.results.yours ? (
+            <Payoff selection={state.selection} result={state.results.yours} dispatch={dispatch} />
           ) : (
-            <Placeholder screen={screen} onNext={NEXT_ACTION[screen] && (() => dispatch(NEXT_ACTION[screen]!))} onRestart={restart} />
+            <Placeholder screen={screen} onRestart={restart} />
           )}
         </div>
 
@@ -208,7 +212,7 @@ export function App() {
       </Stage>
       {DEV_PANEL ? (
         <Suspense fallback={null}>
-          <DevPanel dispatch={dispatch} engineRef={engineRef} screen={screen} round={state.round} />
+          <DevPanel dispatch={dispatch} engineRef={engineRef} screen={screen} />
         </Suspense>
       ) : null}
     </>

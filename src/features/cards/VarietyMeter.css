@@ -1,0 +1,49 @@
+.meter {
+  width: 100%;
+  transition: opacity var(--t-std) var(--ease-out);
+}
+
+.meter.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.meter__bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.meter__seg {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.meter__fill {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  transition: transform var(--t-std) var(--ease-out);
+}
+
+.meter__labels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.meter__caption {
+  margin: 8px 0 0;
+  font-size: 22px;
+  color: var(--text-dim);
+}

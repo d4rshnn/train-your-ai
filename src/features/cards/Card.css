@@ -1,0 +1,108 @@
+.card {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--bg-2);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: transform var(--t-micro) var(--ease-out), box-shadow var(--t-std) var(--ease-out), opacity var(--t-std), border-color var(--t-std);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* darken the bottom edge so the label chip is always legible */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 62%, rgba(7, 9, 10, 0.72));
+  pointer-events: none;
+}
+
+.card__chip {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 1;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  background: rgba(7, 9, 10, 0.78);
+}
+
+.card__chip.is-cat {
+  color: var(--accent);
+}
+
+.card__chip.is-notcat {
+  color: var(--text-dim);
+}
+
+@media (hover: hover) {
+  .card:hover:not(.is-selected) {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  }
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.card.is-selected {
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.4), 0 0 28px var(--accent-glow);
+}
+
+.card__tick {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg-0);
+}
+
+.card.is-disabled {
+  opacity: 0.42;
+}
+
+.card.is-unseen {
+  border: 2px dashed var(--text-dim);
+}
+
+.card__mark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(7, 9, 10, 0.8);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text);
+}

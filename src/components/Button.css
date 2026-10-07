@@ -1,0 +1,62 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 0 56px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform var(--t-micro) var(--ease-out), box-shadow var(--t-std) var(--ease-out), opacity var(--t-std);
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--bg-0);
+  box-shadow: 0 0 32px var(--accent-glow);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border-color: var(--line);
+  min-height: 56px;
+  padding: 0 32px;
+  font-size: var(--fs-label);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  box-shadow: none;
+  cursor: default;
+}
+
+.btn--pulse {
+  animation: btn-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes btn-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 24px var(--accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 52px var(--accent-glow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--pulse {
+    animation: none;
+  }
+}

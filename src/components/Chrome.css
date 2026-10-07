@@ -1,0 +1,93 @@
+/* Persistent chrome: brand mark, step dots, footer. */
+.brand {
+  position: absolute;
+  top: 32px;
+  left: var(--safe);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  touch-action: none;
+}
+
+.brand__x {
+  color: var(--accent);
+}
+
+.brand__logo {
+  height: 28px;
+  width: auto;
+}
+
+.steps {
+  position: absolute;
+  top: 32px;
+  right: var(--safe);
+  z-index: 5;
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps__dot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0.55;
+}
+
+.steps__dot::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--text-dim);
+}
+
+.steps__dot.is-done::before {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+}
+
+.steps__dot.is-current {
+  opacity: 1;
+  color: var(--text);
+}
+
+.steps__dot.is-current::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.footer {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  bottom: 24px;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.footer__note {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}

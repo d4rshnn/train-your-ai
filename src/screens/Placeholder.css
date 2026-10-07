@@ -1,0 +1,38 @@
+.placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.placeholder h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-headline);
+}
+
+.placeholder__tag {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.placeholder__note {
+  margin: 0 0 24px;
+  font-size: var(--fs-caption);
+  color: var(--text-dim);
+}
+
+.placeholder__actions {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}

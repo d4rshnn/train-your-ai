@@ -1,0 +1,20 @@
+# ---- build output and dependencies ----
+node_modules/
+dist/
+.vercel/
+
+# ---- local only: never pushed ----
+# planning, notes, operator sheet, soak results, contact sheet
+docs/
+TRAIN_YOUR_AI_PLAN.md
+# photo candidates downloaded for review (the chosen ones are already in src/assets/images)
+assets-review/
+# recorded fallback video for the stall
+*.mp4
+
+# ---- misc ----
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db

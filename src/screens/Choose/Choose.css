@@ -1,0 +1,79 @@
+/* Fixed geometry: 5x4 grid at the left, tray + controls at the right. Nothing here changes size while playing. */
+.choose {
+  position: absolute;
+  inset: 0;
+}
+
+.choose__grid {
+  position: absolute;
+  left: var(--safe);
+  top: 88px;
+  display: grid;
+  grid-template-columns: repeat(5, 144px);
+  grid-auto-rows: 144px;
+  gap: 12px;
+}
+
+.choose__panel {
+  position: absolute;
+  left: 856px;
+  top: 88px;
+  width: 462px;
+  height: 612px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.choose__headline {
+  margin: 0;
+  height: 90px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 38px;
+  line-height: 1.15;
+}
+
+.choose__sub {
+  margin: 0;
+  height: 30px;
+  font-size: 24px;
+  color: var(--text-dim);
+}
+
+.choose__notice {
+  margin: 0;
+  height: 22px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--warn);
+}
+
+.choose__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.choose__count {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.choose__count b {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.choose__panel .meter {
+  margin-bottom: 14px;
+}
+
+.choose__train {
+  margin-top: auto;
+  width: 100%;
+}

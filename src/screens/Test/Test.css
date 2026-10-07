@@ -1,0 +1,222 @@
+.test {
+  position: absolute;
+  inset: 0;
+}
+
+.test__chip {
+  position: absolute;
+  left: 1056px;
+  top: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.test__chip i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.test__card {
+  position: absolute;
+  width: 170px;
+  z-index: 3;
+  will-change: transform, opacity;
+}
+
+.test__tag {
+  margin: 12px 0 0;
+  width: 262px;
+  margin-left: -46px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.test__caption {
+  position: absolute;
+  left: 1056px;
+  top: 362px;
+  width: 262px;
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.25;
+  animation: caption-in 500ms var(--ease-out) both;
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- output bars ---- */
+.test__bars {
+  position: absolute;
+  left: 1056px;
+  top: 490px;
+  width: 262px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--t-std) var(--ease-out), transform var(--t-std) var(--ease-out);
+}
+
+.test__bars.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.test__sim {
+  margin: 0 0 2px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 66px 1fr 52px;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.8;
+  transition: opacity var(--t-std);
+}
+
+.bar.is-win {
+  opacity: 1;
+}
+
+.bar__name {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bar.is-win .bar__name {
+  color: var(--text);
+}
+
+.bar__track {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.bar__track i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: var(--accent-deep);
+}
+
+.bar.is-win .bar__track i {
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.bar.is-poor .bar__track i {
+  background: var(--warn);
+  box-shadow: none;
+}
+
+.bar__num {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+
+.bar__num b {
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* ---- verdict banner ---- */
+.test__verdict {
+  position: absolute;
+  left: 1056px;
+  top: 628px;
+  width: 262px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 16px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.test__verdict.is-on {
+  opacity: 1;
+  transform: none;
+  transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
+}
+
+.test__verdict.is-good {
+  color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+
+/* calm amber-grey, not an alarm */
+.test__verdict.is-poor {
+  color: var(--warn);
+  border: 1px solid rgba(227, 179, 65, 0.4);
+  background: rgba(227, 179, 65, 0.07);
+  font-size: 22px;
+  text-transform: none;
+}
+
+.test__hint {
+  position: absolute;
+  left: 1056px;
+  top: 700px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .test__caption {
+    animation: none;
+  }
+}

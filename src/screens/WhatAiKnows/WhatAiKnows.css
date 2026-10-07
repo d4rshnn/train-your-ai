@@ -1,0 +1,203 @@
+.wak {
+  position: absolute;
+  inset: 0;
+}
+
+.wak__headline {
+  position: absolute;
+  left: var(--safe);
+  top: 92px;
+  margin: 0;
+  width: 1100px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-headline);
+  line-height: 1.1;
+}
+
+.wak__card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(var(--accent-rgb), 0.08);
+  transition: transform 900ms var(--ease-out);
+  animation: card-in 700ms var(--ease-out) both;
+}
+
+.wak__card img,
+.wak__card canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wak__card img {
+  position: absolute;
+  object-fit: cover;
+  max-width: none;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- rings + labels (stage coordinates) ---- */
+.wak__rings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-std);
+}
+
+.wak__rings.is-on {
+  opacity: 1;
+}
+
+.wak__ring {
+  opacity: 0;
+}
+
+.is-on .wak__ring {
+  animation: ring-in 700ms var(--ease-out) both;
+}
+
+@keyframes ring-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.wak__ring ellipse {
+  fill: rgba(var(--accent-rgb), 0.07);
+  stroke: rgba(var(--accent-rgb), 0.75);
+  stroke-width: 1.6;
+}
+
+.wak__ring path {
+  fill: none;
+  stroke: rgba(var(--accent-rgb), 0.45);
+  stroke-width: 1;
+}
+
+.wak__ring text {
+  fill: var(--text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.wak__patterns {
+  position: absolute;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity var(--t-std);
+}
+
+.wak__patterns.is-on {
+  opacity: 1;
+}
+
+/* honesty tag: stays on screen once the photo becomes numbers */
+.wak__tag {
+  position: absolute;
+  left: var(--safe);
+  bottom: 70px;
+  margin: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity var(--t-std);
+}
+
+.wak__tag.is-on {
+  opacity: 1;
+}
+
+.wak__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 596px;
+  margin: 0;
+  text-align: center;
+  font-size: 32px;
+  line-height: 1.2;
+  animation: caption-in 500ms var(--ease-out) both;
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.wak__cta {
+  position: absolute;
+  left: 50%;
+  top: 648px;
+  transform: translateX(-50%);
+}
+
+.wak__cta:active:not(:disabled) {
+  transform: translateX(-50%) scale(0.98);
+}
+
+.wak__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 668px;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wak__card,
+  .wak__caption,
+  .is-on .wak__ring {
+    animation: none;
+  }
+  .wak__card {
+    transition: none;
+  }
+}

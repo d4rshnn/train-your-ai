@@ -1,0 +1,35 @@
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg > * {
+  position: absolute;
+  inset: 0;
+}
+
+.bg__gradient {
+  background:
+    radial-gradient(ellipse 70% 80% at 85% 100%, rgba(var(--accent-rgb), 0.12), transparent 70%),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1));
+}
+
+.bg__grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bg__points {
+  width: 100%;
+  height: 100%;
+}
+
+.bg__noise {
+  background-size: 256px 256px;
+  opacity: 0.03;
+  mix-blend-mode: screen;
+}

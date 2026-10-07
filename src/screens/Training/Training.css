@@ -1,0 +1,270 @@
+.training {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---- left feed of the 10 chosen cards (stage coordinates) ---- */
+.feed__slot {
+  position: absolute;
+  border-radius: 12px;
+  border: 1px dashed rgba(154, 167, 160, 0.28);
+}
+
+.feed__card {
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid rgba(var(--accent-rgb), 0.7);
+  background: var(--bg-2);
+  box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.2);
+  will-change: transform, opacity;
+}
+
+.feed__card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.feed__label {
+  position: absolute;
+  left: 3px;
+  bottom: 3px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  background: rgba(7, 9, 10, 0.82);
+}
+
+.feed__label.is-cat {
+  color: var(--accent);
+}
+
+/* ---- label chips that dock at the output nodes ---- */
+.training__docks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.dock {
+  position: absolute;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  background: rgba(7, 9, 10, 0.86);
+  border: 1px solid var(--line);
+  opacity: 0;
+}
+
+.dock.is-cat {
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+
+/* ---- right panel ---- */
+.training__panel {
+  position: absolute;
+  left: 1056px;
+  top: 100px;
+  width: 262px;
+  height: 590px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.training__chip,
+.training__pct,
+.training__bar {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--t-std) var(--ease-out), transform var(--t-std) var(--ease-out);
+}
+
+.is-on.training__chip,
+.is-on.training__pct,
+.is-on.training__bar {
+  opacity: 1;
+  transform: none;
+}
+
+.training__chip {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.training__chip i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  animation: pip 1.2s ease-in-out infinite;
+}
+
+@keyframes pip {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.training__pct {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.training__pct small {
+  margin-left: 4px;
+  font-size: 32px;
+  color: var(--text-dim);
+}
+
+.training__bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.training__bar i {
+  display: block;
+  height: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: var(--accent);
+  box-shadow: 0 0 14px var(--accent-glow);
+}
+
+.training__caption {
+  margin: 8px 0 0;
+  font-size: 26px;
+  line-height: 1.25;
+  color: var(--text);
+  animation: caption-in 500ms var(--ease-out) both;
+  transition: opacity var(--t-std);
+}
+
+.training__caption.is-off {
+  opacity: 0;
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.training__stamp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.training__stamp.is-on {
+  opacity: 1;
+  transform: none;
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+
+.training__stamp strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 34px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.training__stamp p {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--text-dim);
+}
+
+.training__stamp svg circle {
+  fill: none;
+  stroke: rgba(var(--accent-rgb), 0.45);
+  stroke-width: 2;
+}
+
+.training__stamp svg path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+}
+
+.training__stamp.is-on svg path {
+  animation: draw 500ms 250ms var(--ease-out) forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.training__hint {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  animation: caption-in 500ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .training__chip i,
+  .training__caption,
+  .training__stamp.is-on svg path {
+    animation: none;
+  }
+  .training__stamp svg path {
+    stroke-dashoffset: 0;
+  }
+}

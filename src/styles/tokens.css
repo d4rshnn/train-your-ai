@@ -1,0 +1,41 @@
+/* Design tokens (plan 6.1-6.2). Change the accent in ONE place: --accent-rgb. */
+:root {
+  /* PLACEHOLDER: replace with the COC green (r, g, b). Everything accent-coloured derives from this. */
+  --accent-rgb: 47, 227, 122;
+
+  --bg-0: #07090a;
+  --bg-1: #0d1210;
+  --bg-2: #131a16;
+  --line: #1e2924;
+  --text: #f2f5f3;
+  --text-dim: #9aa7a0;
+  --accent: rgb(var(--accent-rgb));
+  --accent-deep: color-mix(in srgb, var(--accent) 45%, #000);
+  --accent-glow: rgba(var(--accent-rgb), 0.35);
+  --warn: #e3b341;
+  --bad: #c8665a;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Type scale at the 1366x768 design canvas */
+  --fs-title: 112px;
+  --fs-headline: 56px;
+  --fs-caption: 28px;
+  --fs-label: 16px;
+  --fs-number: 96px;
+
+  /* Spacing: 8px base, 48px safe margin */
+  --u: 8px;
+  --safe: 48px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --t-micro: 150ms;
+  --t-std: 350ms;
+  --t-hero: 700ms;
+
+  --stage-w: 1366px;
+  --stage-h: 768px;
+}

@@ -5,12 +5,15 @@ export const STEPS: Step[] = ['Learn', 'Choose', 'Train', 'Test', 'Understand']
 
 const STEP_OF: Record<Screen, number> = {
   attract: -1,
-  whatAiKnows: 0,
+  whatIsAi: 0,
+  rules: 0,
+  learner: 0,
   choose: 1,
   training: 2,
   test: 3,
   why: 4,
   whatIf: 4,
+  everywhere: 4,
   payoff: 4,
 }
 

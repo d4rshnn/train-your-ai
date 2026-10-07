@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type Dispatch } from 'react'
 import { TEST_EXAMPLES } from '../../data/examples'
 import { Button } from '../../components/Button'
 import { CatIcon } from '../../components/CatIcon'
+import { DomainChips } from '../../components/DomainChips'
 import { Card } from '../../features/cards/Card'
 import { imageUrl } from '../../features/cards/images'
 import { displayPercents, OUTPUTS } from '../../features/network/inference'
@@ -9,7 +10,7 @@ import { buildLayout } from '../../features/network/layout'
 import { NET_H, NET_W } from '../../features/network/placement'
 import { drive, Timeline } from '../../features/network/timeline'
 import { planTraining } from '../../features/network/training'
-import { BEAT, CLOSING, DEFINITIONS, HONEST_NOTE, PIPELINE_LABELS, pileOrder, stageTime } from '../../features/payoff/content'
+import { BEAT, CLOSING, DEFINITIONS, HONEST_NOTE, PIPELINE_LABELS, pileOrder, SIGNPOST, stageTime } from '../../features/payoff/content'
 import { MiniNetwork } from '../../features/payoff/MiniNetwork'
 import { resolveSelection } from '../../features/sim/predict'
 import { varietyScore } from '../../features/sim/score'
@@ -159,6 +160,10 @@ export function Payoff({ selection, result, dispatch }: Props) {
       </div>
 
       <h2 className={`payoff__closing ${closing ? 'is-on' : ''}`}>{CLOSING}</h2>
+      <div className={`payoff__signpost ${closing ? 'is-on' : ''}`}>
+        <span>{SIGNPOST}</span>
+        <DomainChips onlyOthers />
+      </div>
       <p className={`payoff__note ${closing ? 'is-on' : ''}`}>{HONEST_NOTE}</p>
 
       <Button className={`payoff__restart ${done ? 'is-on' : ''}`} onClick={() => dispatch({ type: 'RESTART' })} disabled={!done} aria-hidden={!done}>

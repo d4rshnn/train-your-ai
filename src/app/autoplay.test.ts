@@ -11,13 +11,13 @@ describe('autoplay', () => {
     expect(parseAutoplay('?autoplay&fast')).toEqual({ enabled: true, once: false, fast: true })
   })
 
-  it('has a single pick: no second-round pauses in the dwell table', () => {
-    expect(Object.keys(TIMING).sort()).toEqual(['attract', 'compareHold', 'explainerHold', 'payoffHold', 'pick', 'prePick', 'prePlay'])
+  it('has a single pick and no pause for the auto-advancing intro screens in the dwell table', () => {
+    expect(Object.keys(TIMING).sort()).toEqual(['attract', 'compareHold', 'payoffHold', 'pick', 'prePick', 'prePlay'])
   })
 
-  it('picks cards about 0.4 s apart and holds the payoff for about 6 s', () => {
+  it('picks cards about 0.4 s apart and holds the payoff for about 5 s', () => {
     expect(TIMING.pick).toBe(400)
-    expect(TIMING.payoffHold).toBe(6000)
+    expect(TIMING.payoffHold).toBe(5000)
   })
 
   it('fast mode shrinks every pause but never below 100 ms', () => {

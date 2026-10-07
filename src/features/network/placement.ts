@@ -21,14 +21,14 @@ export type NetPlace = keyof typeof NET_POS
 export function placeFor(screen: Screen): NetPlace {
   switch (screen) {
     case 'attract':
-    case 'whatAiKnows':
+    case 'learner': // its own steps hide the network until the numbers stream in
       return 'side'
     case 'training':
     case 'test':
     case 'whatIf': // the replay shows the network; the side-by-side hides it (the screen asks for that itself)
       return 'hero'
     default:
-      // choose, why, payoff: the network steps aside
+      // whatIsAi, rules, choose, why, everywhere, payoff: the network steps aside
       return 'hidden'
   }
 }

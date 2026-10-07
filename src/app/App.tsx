@@ -11,12 +11,15 @@ import { Network } from '../features/network/Network'
 import { NET_POS, placeFor } from '../features/network/placement'
 import { Attract } from '../screens/Attract/Attract'
 import { Choose } from '../screens/Choose/Choose'
+import { Everywhere } from '../screens/Everywhere/Everywhere'
+import { Learner } from '../screens/Learner/Learner'
 import { Payoff } from '../screens/Payoff/Payoff'
 import { Placeholder } from '../screens/Placeholder'
+import { Rules } from '../screens/Rules/Rules'
 import { Test } from '../screens/Test/Test'
 import { Training } from '../screens/Training/Training'
-import { WhatAiKnows } from '../screens/WhatAiKnows/WhatAiKnows'
 import { WhatIf } from '../screens/WhatIf/WhatIf'
+import { WhatIsAi } from '../screens/WhatIsAi/WhatIsAi'
 import { Why } from '../screens/Why/Why'
 import { initialState, reducer } from '../state/machine'
 import { stepIndex } from '../state/selectors'
@@ -144,7 +147,7 @@ export function App() {
   const start = useCallback(() => dispatch({ type: 'START' }), [])
   const restart = useCallback(() => dispatch({ type: 'RESTART' }), [])
 
-  // A screen can ask for the network to step aside for a while (S2 until the mosaic streams in; the what-if side-by-side)
+  // A screen can ask for the network to step aside for a while (the learner screen until the mosaic streams in; the what-if side-by-side)
   const [netHidden, setNetHidden] = useState(false)
   const pos = NET_POS[netHidden ? 'hidden' : placeFor(screen)]
 
@@ -181,8 +184,12 @@ export function App() {
         <div className="screen-layer" key={screen}>
           {screen === 'attract' ? (
             <Attract onStart={start} />
-          ) : screen === 'whatAiKnows' ? (
-            <WhatAiKnows dispatch={dispatch} engineRef={engineRef} onNetworkHidden={setNetHidden} />
+          ) : screen === 'whatIsAi' ? (
+            <WhatIsAi dispatch={dispatch} />
+          ) : screen === 'rules' ? (
+            <Rules dispatch={dispatch} />
+          ) : screen === 'learner' ? (
+            <Learner dispatch={dispatch} engineRef={engineRef} onNetworkHidden={setNetHidden} />
           ) : screen === 'choose' ? (
             <Choose selection={state.selection} dispatch={dispatch} />
           ) : screen === 'training' ? (
@@ -201,6 +208,8 @@ export function App() {
               onNetworkHidden={setNetHidden}
               onContinue={() => dispatch({ type: 'ADVANCE' })}
             />
+          ) : screen === 'everywhere' ? (
+            <Everywhere dispatch={dispatch} />
           ) : screen === 'payoff' && state.results.yours ? (
             <Payoff selection={state.selection} result={state.results.yours} dispatch={dispatch} />
           ) : (

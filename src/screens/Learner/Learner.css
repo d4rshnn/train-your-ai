@@ -166,17 +166,6 @@
   }
 }
 
-.wak__cta {
-  position: absolute;
-  left: 50%;
-  top: 648px;
-  transform: translateX(-50%);
-}
-
-.wak__cta:active:not(:disabled) {
-  transform: translateX(-50%) scale(0.98);
-}
-
 .wak__hint {
   position: absolute;
   left: 0;

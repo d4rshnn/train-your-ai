@@ -1,0 +1,212 @@
+.rules {
+  position: absolute;
+  inset: 0;
+}
+
+.rules__headline {
+  position: absolute;
+  left: var(--safe);
+  top: 92px;
+  margin: 0;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-headline);
+  line-height: 1.1;
+  animation: rules-in 500ms var(--ease-out) both;
+}
+
+@keyframes rules-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---- the checklist ---- */
+.rules__list {
+  position: absolute;
+  left: var(--safe);
+  top: 200px;
+  width: 420px;
+  padding: 20px 28px 24px;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(19, 26, 22, 0.8);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+
+.rules__list.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.rules__label {
+  margin: 0 0 14px;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.rules__list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rules__list li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 30px;
+  animation: rules-in 450ms calc(0.35s + var(--i) * 0.35s) var(--ease-out) both;
+}
+
+.rules__box {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1.5px solid var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 26px;
+  line-height: 1;
+}
+
+.rules__box.is-yes {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.12);
+  animation: rules-pop 400ms var(--d) var(--ease-out) both;
+}
+
+.rules__box.is-no {
+  color: var(--warn);
+  border-color: var(--warn);
+  background: rgba(227, 179, 65, 0.1);
+  animation: rules-pop 400ms var(--d) var(--ease-out) both;
+}
+
+@keyframes rules-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+/* ---- the photo that fools it ---- */
+.rules__photo {
+  position: absolute;
+  left: 560px;
+  top: 190px;
+  width: 340px;
+  height: 340px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  animation: rules-in 450ms var(--ease-out) both;
+}
+
+.rules__photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.rules__caption {
+  position: absolute;
+  left: 940px;
+  top: 214px;
+  width: 380px;
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.2;
+  animation: rules-in 450ms 200ms var(--ease-out) both;
+}
+
+.rules__verdict {
+  position: absolute;
+  left: 940px;
+  top: 360px;
+  width: 380px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: rules-in 450ms var(--ease-out) both;
+}
+
+.rules__verdict b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warn);
+}
+
+.rules__verdict span {
+  font-size: 28px;
+  color: var(--text-dim);
+}
+
+.rules__photo.is-dim,
+.rules__caption.is-dim,
+.rules__verdict.is-dim {
+  opacity: 0.35;
+  transition: opacity 500ms;
+  animation: none;
+}
+
+.rules__closing {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  top: 580px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1.15;
+  animation: rules-in 600ms var(--ease-out) both;
+}
+
+.rules__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 668px;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rules__headline,
+  .rules__list li,
+  .rules__box,
+  .rules__photo,
+  .rules__caption,
+  .rules__verdict,
+  .rules__closing {
+    animation: none;
+    opacity: 1;
+  }
+  .rules__list {
+    transition: none;
+  }
+}

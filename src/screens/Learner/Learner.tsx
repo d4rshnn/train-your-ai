@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useRef, useState, type Dispatch, type MutableRefObject } from 'react'
 import { TRAINING_EXAMPLES } from '../../data/examples'
-import { Button } from '../../components/Button'
 import { imageUrl } from '../../features/cards/images'
 import { cellDelay, cellNumber, cellsFromImageData, FACE_CROP, GRID, HIGHLIGHTS, showsNumber, stretchCells, tint, type Cell } from '../../features/explain/mosaic'
 import type { NetworkEngine } from '../../features/network/engine'
 import { drive, Timeline } from '../../features/network/timeline'
 import type { Action } from '../../state/machine'
-import './WhatAiKnows.css'
+import { SKIP_AFTER_MS } from '../useScreenClock'
+import './Learner.css'
 
 /** The cat used for the explainer: a clear, front-facing training card. */
 const CAT = TRAINING_EXAMPLES[0]
 
-/** Each step advances on a tap or after ~3 s (plan S2: about 10 s in total). */
-export const STEP_MS = 3000
+/** Each step advances on a tap or after 2.5 s; the last one holds for 2.5 s too, then the screen moves on (10 s in total). */
+export const STEP_MS = 2500
 export const CAPTIONS = [
   'This is a cat. To you, obviously.',
   'To an AI, a picture starts as just numbers.',
@@ -38,9 +38,10 @@ type Props = {
   onNetworkHidden: (hidden: boolean) => void
 }
 
-export function WhatAiKnows({ dispatch, engineRef, onNetworkHidden }: Props) {
+export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
   const [step, setStep] = useState(0)
   const [ready, setReady] = useState(false)
+  const [lastReady, setLastReady] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const cells = useRef<Cell[]>([])
@@ -148,17 +149,26 @@ export function WhatAiKnows({ dispatch, engineRef, onNetworkHidden }: Props) {
     return () => onNetworkHidden(false)
   }, [step, onNetworkHidden])
 
-  // auto-advance
+  // auto-advance: through the four captions, then on to Choose by itself (a tap moves on too, once the last line has had 1.5 s)
+  const moved = useRef(false)
+  const leave = useCallback(() => {
+    if (moved.current) return
+    moved.current = true
+    dispatch({ type: 'ADVANCE' })
+  }, [dispatch])
   useEffect(() => {
-    if (step >= 3) return
-    const t = window.setTimeout(next, STEP_MS)
-    return () => window.clearTimeout(t)
-  }, [step, next])
+    const t = window.setTimeout(step >= 3 ? leave : next, STEP_MS)
+    const r = step >= 3 ? window.setTimeout(() => setLastReady(true), SKIP_AFTER_MS) : undefined
+    return () => {
+      window.clearTimeout(t)
+      window.clearTimeout(r)
+    }
+  }, [step, next, leave])
 
   const pos = step >= 2 ? `translate(${SMALL.x}px, ${SMALL.y}px) scale(${SMALL.size / BIG.size})` : `translate(${BIG.x}px, ${BIG.y}px)`
 
   return (
-    <section className="wak" onPointerDown={step < 3 ? next : undefined}>
+    <section className="wak" onPointerDown={step < 3 ? next : lastReady ? leave : undefined}>
       <h2 className="wak__headline">An AI doesn&apos;t know what a cat is.</h2>
 
       <div className="wak__card" style={{ transform: pos, width: BIG.size, height: BIG.size }}>
@@ -202,13 +212,7 @@ export function WhatAiKnows({ dispatch, engineRef, onNetworkHidden }: Props) {
         {CAPTIONS[step]}
       </p>
 
-      {step === 3 ? (
-        <Button className="wak__cta" onClick={() => dispatch({ type: 'ADVANCE' })} autoFocus>
-          Choose examples
-        </Button>
-      ) : (
-        <p className="wak__hint">Tap to continue</p>
-      )}
+      {step < 3 || lastReady ? <p className="wak__hint">Tap to continue</p> : null}
     </section>
   )
 }

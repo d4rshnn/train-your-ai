@@ -1,0 +1,125 @@
+.every {
+  position: absolute;
+  inset: 0;
+}
+
+.every__headline {
+  position: absolute;
+  left: var(--safe);
+  top: 92px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-headline);
+  line-height: 1.1;
+  animation: every-in 500ms var(--ease-out) both;
+}
+
+@keyframes every-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.every__row {
+  position: absolute;
+  left: var(--safe);
+  top: 210px;
+  width: 1270px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.every__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  height: 290px;
+  padding: 26px 16px 0;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(19, 26, 22, 0.8);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out), border-color 500ms, box-shadow 500ms;
+}
+
+.every__item.is-on {
+  opacity: 1;
+  transform: none;
+  border-color: rgba(var(--accent-rgb), 0.45);
+  box-shadow: 0 0 26px rgba(var(--accent-rgb), 0.12);
+}
+
+.every__icon svg {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.every__item b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.every__line {
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text-dim);
+}
+
+.every__closing {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  top: 560px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 56px;
+  line-height: 1.1;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+
+.every__closing.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.every__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 668px;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .every__headline {
+    animation: none;
+  }
+  .every__item,
+  .every__closing {
+    transition: none;
+  }
+}

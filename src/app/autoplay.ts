@@ -7,18 +7,17 @@ export function parseAutoplay(search: string): { enabled: boolean; once: boolean
 }
 
 /**
- * Pauses (ms) between the scripted actions. The screens keep their own animations and auto-advance timers (training,
- * test, why and the what-if replay move on by themselves); these are only the extra dwell times a person would spend
+ * Pauses (ms) between the scripted actions. The screens keep their own animations and auto-advance timers (the intro
+ * screens, training, test, why, the what-if replay and everywhere move on by themselves); these are only the extra dwell times a person would spend
  * reading, plus the pick pace. PLAN_V2 target: one cycle of about 2 minutes.
  */
 export const TIMING = {
   attract: 24_000, // S1 on screen before START
-  explainerHold: 8_000, // S2 after the last caption appears, before CHOOSE EXAMPLES
   prePick: 7_000, // Choose: before the first card (read the screen)
   pick: 400, // between cards flying into the tray
   prePlay: 4_000, // tray full, before TRAIN
   compareHold: 8_000, // What if: after the side-by-side has counted up, before CONTINUE
-  payoffHold: 6_000, // Payoff final state before looping (plan: hold ~6 s)
+  payoffHold: 5_000, // Payoff final state before looping
 } as const
 
 export type Timing = { [K in keyof typeof TIMING]: number }
@@ -88,10 +87,7 @@ export async function runAutoplay({ once, signal, timing = TIMING, onFinished }:
       await sleep(t.attract, signal)
       await press('.attract__start', signal)
 
-      // What does the AI know? (its own steps advance by themselves, then the button appears)
-      await waitFor('.wak__cta', signal)
-      await sleep(t.explainerHold, signal)
-      await press('.wak__cta', signal)
+      // What is AI?, Rules and the learner move on by themselves (about 28 s), straight into Choose
 
       // Choose: the one and only pick. The worst achievable set, so the story shows the struggle and then the what-if.
       await waitFor('.choose__grid', signal)
@@ -103,7 +99,8 @@ export async function runAutoplay({ once, signal, timing = TIMING, onFinished }:
       await sleep(t.prePlay, signal)
       await press('.choose__train', signal)
 
-      // Training, Test and Why move on by themselves; the what-if replay then shows the side-by-side and CONTINUE
+      // Training, Test and Why move on by themselves; the what-if replay then shows the side-by-side and CONTINUE.
+      // After CONTINUE the "everywhere" screen moves on by itself too.
       await waitFor('.whatif__continue', signal, 150_000)
       await sleep(t.compareHold, signal)
       await press('.whatif__continue', signal)

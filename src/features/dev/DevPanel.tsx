@@ -1,13 +1,13 @@
 import { useEffect, useState, type Dispatch, type MutableRefObject } from 'react'
 import type { NetworkEngine } from '../network/engine'
 import { GOOD_SET, worstAchievableSet } from '../sim/presets'
-import type { Action, Screen } from '../../state/machine'
+import { ADVANCES_TO_CHOOSE, type Action, type Screen } from '../../state/machine'
 import './DevPanel.css'
 
 type Props = { dispatch: Dispatch<Action>; engineRef: MutableRefObject<NetworkEngine | null>; screen: Screen }
 
 const WORST = worstAchievableSet()
-const TARGETS = ['Training', 'Test', 'Why', 'What if', 'Payoff'] as const
+const TARGETS = ['What is AI', 'Rules', 'Learner', 'Training', 'Test', 'Why', 'What if', 'Everywhere', 'Payoff'] as const
 type Target = (typeof TARGETS)[number]
 
 /** Dev-only (?dev): pick a preset and either watch it play from Training or jump straight to a later screen. */
@@ -29,13 +29,21 @@ export default function DevPanel({ dispatch, engineRef, screen }: Props) {
   const pick = (ids: string[], andTrain: boolean) => {
     dispatch({ type: 'RESTART' })
     dispatch({ type: 'START' })
-    dispatch({ type: 'ADVANCE' })
+    for (let i = 0; i < ADVANCES_TO_CHOOSE; i++) dispatch({ type: 'ADVANCE' })
     ids.forEach((id) => dispatch({ type: 'TOGGLE_CARD', id }))
     if (andTrain) dispatch({ type: 'TRAIN' })
   }
 
   /** Jump to a screen by playing the earlier steps instantly. */
   const jump = () => {
+    // the three intro screens come before any pick, so these targets only walk forward from the start
+    const intro = TARGETS.indexOf(target)
+    if (intro < 3) {
+      dispatch({ type: 'RESTART' })
+      dispatch({ type: 'START' })
+      for (let i = 0; i < intro; i++) dispatch({ type: 'ADVANCE' })
+      return
+    }
     pick(preset === 'worst' ? WORST : GOOD_SET, true)
     if (target === 'Training') return
     dispatch({ type: 'ANIM_DONE', stage: 'training' })
@@ -44,6 +52,8 @@ export default function DevPanel({ dispatch, engineRef, screen }: Props) {
     if (target === 'Why') return
     dispatch({ type: 'ADVANCE' })
     if (target === 'What if') return
+    dispatch({ type: 'ADVANCE' })
+    if (target === 'Everywhere') return
     dispatch({ type: 'ADVANCE' })
   }
 

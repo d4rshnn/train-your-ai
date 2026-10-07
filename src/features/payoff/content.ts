@@ -14,16 +14,17 @@ export const CLOSING = 'You just experienced the basic idea behind Machine Learn
 
 export const HONEST_NOTE = 'This was a visual simulation. Real models train on far more data — but the idea is the same. More examples and correct labels matter too.'
 
-/** Beat times in seconds. The pulse crosses the five stages in about 6 s, then the definitions arrive. */
+/** Beat times in seconds. The pulse crosses the five stages in under 4 s, the definitions are in by 5 s and it is all done by 6 s. */
 export const BEAT = {
   pulseStart: 0.3,
-  pulseDur: 5.2,
-  /** extra time after the pulse reaches the last stage before the definitions start */
-  defs: 6.2,
-  defStagger: 0.28,
-  closing: 7.6,
-  done: 8.4,
+  pulseDur: 3.4,
+  defs: 4.0,
+  defStagger: 0.25,
+  closing: 5.2,
+  done: 5.9,
 } as const
+
+export const SIGNPOST = 'Other COC domains'
 
 /** When the travelling pulse reaches stage i (0..4), in seconds. */
 export const stageTime = (i: number, stages = PIPELINE_LABELS.length) => BEAT.pulseStart + (BEAT.pulseDur * i) / (stages - 1)

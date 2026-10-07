@@ -17,10 +17,10 @@ describe('payoff content', () => {
     expect(HONEST_NOTE).toContain('More examples and correct labels matter too.')
   })
 
-  it('reveals the five stages left to right over about 6 s, then the definitions', () => {
+  it('reveals the five stages left to right over the pulse, then the definitions', () => {
     const times = PIPELINE_LABELS.map((_, i) => stageTime(i))
     expect(times).toEqual([...times].sort((a, b) => a - b))
-    expect(times[4] - times[0]).toBeCloseTo(5.2, 5)
+    expect(times[4] - times[0]).toBeCloseTo(BEAT.pulseDur, 5)
     expect(times[4]).toBeLessThan(BEAT.defs)
     expect(BEAT.defs).toBeLessThan(BEAT.closing)
     expect(BEAT.closing).toBeLessThan(BEAT.done)

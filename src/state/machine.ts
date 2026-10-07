@@ -3,10 +3,24 @@ import { buildAlternate, type Alternate } from '../features/sim/alternate'
 import { simulate } from '../features/sim/predict'
 
 /**
- * Plan v2 flow (Step A): attract -> whatAiKnows -> choose -> training -> test -> why -> whatIf -> payoff.
- * Step B adds whatIsAi, rules, learner and everywhere around it.
+ * Plan v2 flow: attract -> whatIsAi -> rules -> learner -> choose -> training -> test -> why -> whatIf -> everywhere -> payoff.
+ * Choose is the only screen that needs the visitor; every other screen moves on by itself (ADVANCE) or on a tap.
  */
-export type Screen = 'attract' | 'whatAiKnows' | 'choose' | 'training' | 'test' | 'why' | 'whatIf' | 'payoff'
+export type Screen =
+  | 'attract'
+  | 'whatIsAi'
+  | 'rules'
+  | 'learner'
+  | 'choose'
+  | 'training'
+  | 'test'
+  | 'why'
+  | 'whatIf'
+  | 'everywhere'
+  | 'payoff'
+
+/** How many ADVANCEs take the flow from the first screen after START (whatIsAi) to choose. */
+export const ADVANCES_TO_CHOOSE = 3
 export const TRAY_SIZE = 10
 
 export type State = {
@@ -49,12 +63,15 @@ const fresh = (): State => ({ ...initialState, selection: [], results: { yours: 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'START':
-      return state.screen === 'attract' ? { ...state, screen: 'whatAiKnows' } : state
+      return state.screen === 'attract' ? { ...state, screen: 'whatIsAi' } : state
 
     case 'ADVANCE':
-      if (state.screen === 'whatAiKnows') return { ...state, screen: 'choose' }
+      if (state.screen === 'whatIsAi') return { ...state, screen: 'rules' }
+      if (state.screen === 'rules') return { ...state, screen: 'learner' }
+      if (state.screen === 'learner') return { ...state, screen: 'choose' }
       if (state.screen === 'why') return { ...state, screen: 'whatIf' }
-      if (state.screen === 'whatIf') return { ...state, screen: 'payoff' }
+      if (state.screen === 'whatIf') return { ...state, screen: 'everywhere' }
+      if (state.screen === 'everywhere') return { ...state, screen: 'payoff' }
       return state
 
     case 'TOGGLE_CARD': {

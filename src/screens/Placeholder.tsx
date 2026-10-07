@@ -4,12 +4,15 @@ import './Placeholder.css'
 
 const TITLES: Record<Screen, string> = {
   attract: 'Attract',
-  whatAiKnows: 'What does the AI know?',
+  whatIsAi: 'What is AI?',
+  rules: 'Rules',
+  learner: 'Meet the learner',
   choose: 'Choose examples',
   training: 'Training',
   test: 'Test and predict',
   why: 'Why?',
   whatIf: 'What if',
+  everywhere: "It's everywhere",
   payoff: 'Payoff',
 }
 

@@ -37,12 +37,17 @@ const PRE_PAYOFF_FILES = [
   'features/why/copy.ts',
   'features/whatif/copy.ts',
   'screens/Attract/Attract.tsx',
-  'screens/WhatAiKnows/WhatAiKnows.tsx',
+  'screens/WhatIsAi/WhatIsAi.tsx',
+  'screens/Rules/Rules.tsx',
+  'screens/Learner/Learner.tsx',
   'screens/Choose/Choose.tsx',
   'screens/Training/Training.tsx',
   'screens/Test/Test.tsx',
   'screens/Why/Why.tsx',
   'screens/WhatIf/WhatIf.tsx',
+  'screens/Everywhere/Everywhere.tsx',
+  'components/DomainChips.tsx',
+  'data/domains.ts',
 ]
 
 function withoutComments(code: string): string {
@@ -80,7 +85,15 @@ describe('plain language before the payoff screen', () => {
   it('uses the deck wording', () => {
     const all = PRE_PAYOFF_FILES.flatMap((f) => visibleText(read(f))).join('\n')
     for (const line of [
+      'Most software follows rules people write.',
+      'AI is different. It learns from examples.',
+      'At COC, we build things like this. And lots more.',
+      'Pointy ears? A fox has them.',
+      'Whiskers? Not always visible.',
+      'Rules break. So we show it examples instead.',
       'Like a kid who has only ever met white cats.',
+      'Same idea. Different examples.',
+      'Choose 10 examples to teach your AI.',
       'A new cat. It has never seen this one.',
       'Now watch the same AI with more variety.',
       'Now watch what happens if it had only seen very similar cats.',

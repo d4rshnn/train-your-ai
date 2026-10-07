@@ -1,0 +1,291 @@
+.wia {
+  position: absolute;
+  inset: 0;
+}
+
+.wia__headlines {
+  position: absolute;
+  left: var(--safe);
+  top: 92px;
+  width: 1270px;
+  height: 64px;
+}
+
+.wia__headline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 52px;
+  line-height: 1.1;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+
+.wia__headline.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.wia__panel {
+  position: absolute;
+  top: 190px;
+  width: 600px;
+  height: 290px;
+  padding: 20px 28px;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(19, 26, 22, 0.8);
+  transition: opacity 600ms var(--ease-out), border-color 600ms, box-shadow 600ms;
+}
+
+.wia__panel--rules {
+  left: var(--safe);
+  animation: wia-in 600ms 200ms var(--ease-out) both;
+}
+
+.wia__panel--rules.is-dim {
+  opacity: 0.4;
+}
+
+.wia__panel--learns {
+  left: 718px;
+  opacity: 0;
+}
+
+.wia__panel--learns.is-on {
+  opacity: 1;
+  border-color: rgba(var(--accent-rgb), 0.55);
+  box-shadow: 0 0 34px rgba(var(--accent-rgb), 0.16);
+}
+
+@keyframes wia-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.wia__label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.wia__panel--learns.is-on .wia__label {
+  color: var(--accent);
+}
+
+.wia__cap {
+  position: absolute;
+  left: 28px;
+  bottom: 18px;
+  margin: 0;
+  font-size: 22px;
+  color: var(--text-dim);
+}
+
+/* ---- rules: a person writing numbered steps ---- */
+.wia__person {
+  position: absolute;
+  left: 28px;
+  top: 80px;
+}
+
+.wia__person circle,
+.wia__person path {
+  fill: none;
+  stroke: var(--text-dim);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wia__steps {
+  position: absolute;
+  left: 140px;
+  right: 28px;
+  top: 72px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wia__steps li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: wia-in 500ms var(--ease-out) both;
+}
+
+.wia__steps b {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text-dim);
+}
+
+.wia__steps span {
+  flex: 1;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--line);
+}
+
+/* ---- learns: examples flow into a glowing orb ---- */
+.wia__flow {
+  position: absolute;
+  inset: 70px 28px 60px;
+}
+
+.wia__flow img {
+  position: absolute;
+  left: 0;
+  top: calc(var(--i) * 28px);
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  opacity: 0;
+}
+
+.is-on .wia__flow img {
+  animation: wia-flow 2.6s calc(var(--i) * 0.35s) var(--ease-out) 2 both;
+}
+
+@keyframes wia-flow {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  15% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+    transform: translate(400px, calc(60px - var(--i) * 28px)) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(440px, calc(60px - var(--i) * 28px)) scale(0.2);
+  }
+}
+
+.wia__orb {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.5) 0, rgba(var(--accent-rgb), 0.16) 55%, transparent 72%);
+  box-shadow: 0 0 50px 10px var(--accent-glow);
+  opacity: 0.35;
+  transition: opacity 600ms;
+}
+
+.is-on .wia__orb {
+  opacity: 1;
+  animation: wia-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes wia-pulse {
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.wia__orb circle {
+  fill: var(--bg-1);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.wia__orb path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.7;
+  stroke-width: 1.6;
+}
+
+/* ---- COC and domains ---- */
+.wia__coc {
+  position: absolute;
+  left: var(--safe);
+  top: 520px;
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+
+.wia__domains {
+  position: absolute;
+  left: var(--safe);
+  top: 590px;
+  width: 1270px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+
+.wia__coc.is-on,
+.wia__domains.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.wia__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 668px;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wia__headline,
+  .wia__coc,
+  .wia__domains,
+  .wia__panel {
+    transition: none;
+  }
+  .wia__panel--rules,
+  .wia__steps li {
+    animation: none;
+  }
+  .is-on .wia__flow img {
+    animation: none;
+    opacity: 1;
+  }
+  .is-on .wia__orb {
+    animation: none;
+  }
+}

@@ -1,16 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import { GOOD_SET, worstAchievableSet } from '../features/sim/fixtures'
 import { simulate } from '../features/sim/predict'
-import { initialState, reducer, TRAY_SIZE, type Action, type State } from './machine'
+import { ADVANCES_TO_CHOOSE, initialState, reducer, TRAY_SIZE, type Action, type State } from './machine'
 import { stepIndex, struggled } from './selectors'
 
 const run = (actions: Action[], from: State = initialState) => actions.reduce(reducer, from)
 const pick = (ids: string[]): Action[] => ids.map((id) => ({ type: 'TOGGLE_CARD', id }))
-const toChoose = () => run([{ type: 'START' }, { type: 'ADVANCE' }])
+const INTRO: Action[] = Array.from({ length: ADVANCES_TO_CHOOSE }, () => ({ type: 'ADVANCE' }))
+const toChoose = () => run([{ type: 'START' }, ...INTRO])
 const TO_WHY: Action[] = [{ type: 'TRAIN' }, { type: 'ANIM_DONE', stage: 'training' }, { type: 'ANIM_DONE', stage: 'test' }]
 
 describe('flow (one pick, then the what-if)', () => {
-  it('walks attract -> whatAiKnows -> choose -> training -> test -> why -> whatIf -> payoff and back', () => {
+  it('walks the whole flow: attract -> whatIsAi -> rules -> learner -> choose -> training -> test -> why -> whatIf -> everywhere -> payoff, and back', () => {
     const seen: string[] = [initialState.screen]
     let s: State = initialState
     const step = (a: Action[]) => {
@@ -19,12 +20,15 @@ describe('flow (one pick, then the what-if)', () => {
     }
     step([{ type: 'START' }])
     step([{ type: 'ADVANCE' }])
+    step([{ type: 'ADVANCE' }])
+    step([{ type: 'ADVANCE' }])
     step([...pick(worstAchievableSet()), { type: 'TRAIN' }])
     step([{ type: 'ANIM_DONE', stage: 'training' }])
     step([{ type: 'ANIM_DONE', stage: 'test' }])
     step([{ type: 'ADVANCE' }])
     step([{ type: 'ADVANCE' }])
-    expect(seen).toEqual(['attract', 'whatAiKnows', 'choose', 'training', 'test', 'why', 'whatIf', 'payoff'])
+    step([{ type: 'ADVANCE' }])
+    expect(seen).toEqual(['attract', 'whatIsAi', 'rules', 'learner', 'choose', 'training', 'test', 'why', 'whatIf', 'everywhere', 'payoff'])
     s = run([{ type: 'RESTART' }], s)
     expect(s).toEqual(initialState)
   })
@@ -53,8 +57,17 @@ describe('flow (one pick, then the what-if)', () => {
 
   it('maps screens to step dots', () => {
     expect(stepIndex('attract')).toBe(-1)
-    expect(stepIndex('why')).toBe(4)
-    expect(stepIndex('payoff')).toBe(4)
+    for (const s of ['whatIsAi', 'rules', 'learner'] as const) expect(stepIndex(s)).toBe(0) // Learn
+    expect(stepIndex('choose')).toBe(1)
+    expect(stepIndex('training')).toBe(2)
+    expect(stepIndex('test')).toBe(3)
+    for (const s of ['why', 'whatIf', 'everywhere', 'payoff'] as const) expect(stepIndex(s)).toBe(4) // Understand
+  })
+
+  it('takes exactly ADVANCES_TO_CHOOSE advances to get from the first screen to choose, and choose is the only screen that waits', () => {
+    expect(run([{ type: 'START' }]).screen).toBe('whatIsAi')
+    expect(toChoose().screen).toBe('choose')
+    expect(run([{ type: 'START' }, ...INTRO.slice(1)]).screen).toBe('learner')
   })
 })
 
@@ -68,6 +81,10 @@ describe('illegal transitions are no-ops', () => {
     expect(reducer(choose, { type: 'START' })).toBe(choose)
     expect(reducer(choose, { type: 'ANIM_DONE', stage: 'training' })).toBe(choose)
     expect(reducer(choose, { type: 'ADVANCE' })).toBe(choose) // choose only leaves through TRAIN
+    // the intro screens cannot train or pick
+    const intro = run([{ type: 'START' }])
+    expect(reducer(intro, { type: 'TRAIN' })).toBe(intro)
+    expect(reducer(intro, { type: 'TOGGLE_CARD', id: 'train-01' })).toBe(intro)
   })
 
   it('needs exactly 10 cards to train', () => {
@@ -85,8 +102,9 @@ describe('illegal transitions are no-ops', () => {
   it('why and whatIf only move forward, one step at a time', () => {
     const why = run([...pick(GOOD_SET), ...TO_WHY], toChoose())
     expect(run([{ type: 'ADVANCE' }], why).screen).toBe('whatIf')
-    expect(run([{ type: 'ADVANCE' }, { type: 'ADVANCE' }], why).screen).toBe('payoff')
+    expect(run([{ type: 'ADVANCE' }, { type: 'ADVANCE' }], why).screen).toBe('everywhere')
     expect(run([{ type: 'ADVANCE' }, { type: 'ADVANCE' }, { type: 'ADVANCE' }], why).screen).toBe('payoff')
+    expect(run([{ type: 'ADVANCE' }, { type: 'ADVANCE' }, { type: 'ADVANCE' }, { type: 'ADVANCE' }], why).screen).toBe('payoff')
   })
 })
 

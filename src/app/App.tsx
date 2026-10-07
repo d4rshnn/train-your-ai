@@ -195,7 +195,7 @@ export function App() {
           ) : screen === 'training' ? (
             <Training selection={state.selection} onDone={() => dispatch({ type: 'ANIM_DONE', stage: 'training' })} engineRef={engineRef} />
           ) : screen === 'test' && state.results.yours ? (
-            <Test result={state.results.yours} onDone={() => dispatch({ type: 'ANIM_DONE', stage: 'test' })} engineRef={engineRef} />
+            <Test selection={state.selection} result={state.results.yours} onDone={() => dispatch({ type: 'ANIM_DONE', stage: 'test' })} engineRef={engineRef} />
           ) : screen === 'why' && state.results.yours ? (
             <Why selection={state.selection} yours={state.results.yours} onContinue={() => dispatch({ type: 'ADVANCE' })} />
           ) : screen === 'whatIf' && state.results.yours && state.results.alternate && state.alternate ? (

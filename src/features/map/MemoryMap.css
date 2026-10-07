@@ -1,0 +1,253 @@
+/* The memory map: green on charcoal, restrained glow, no filters. Width comes from the parent; the height follows. */
+.map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 640 / 380;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(13, 18, 16, 0.7);
+}
+
+.map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+/* soft translucent islands */
+.map__island {
+  fill: url(#map-island);
+  stroke: rgba(var(--accent-rgb), 0.55);
+  stroke-width: 2;
+  transition: r 1100ms var(--ease-out);
+}
+
+.map__island--other {
+  fill: rgba(154, 167, 160, 0.06);
+  stroke: rgba(154, 167, 160, 0.4);
+  stroke-dasharray: 5 6;
+}
+
+/* the island the new cat landed next to pulses once */
+.map__pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: map-pulse 900ms var(--ease-out) forwards;
+}
+
+@keyframes map-pulse {
+  0% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.22);
+  }
+}
+
+/* example dots: they drift in from beside the picks and settle */
+.map__dot {
+  transition: transform 900ms var(--ease-out);
+}
+
+.map__dot-in {
+  animation: map-settle 900ms var(--ease-out) both;
+}
+
+@keyframes map-settle {
+  from {
+    opacity: 0;
+    transform: translate(26px, -20px) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.map__halo {
+  opacity: 0.16;
+}
+
+.map__core {
+  stroke: var(--bg-0);
+  stroke-width: 1.5;
+}
+
+.is-cat .map__halo,
+.is-cat .map__core {
+  fill: var(--accent);
+}
+
+.is-notcat .map__halo,
+.is-notcat .map__core {
+  fill: var(--text-dim);
+}
+
+/* the new cat: flies in from the right with a trail, then a thin line to the nearest group */
+.map__test {
+  animation: map-fly 1200ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes map-fly {
+  from {
+    opacity: 0;
+    transform: translate(var(--fx), 0);
+  }
+  12% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.map__test .map__core {
+  fill: var(--text);
+  stroke: var(--bg-0);
+  stroke-width: 2;
+}
+
+.map__test.is-inside .map__halo {
+  fill: var(--accent);
+  opacity: 0.35;
+}
+
+.map__test.is-outside .map__halo {
+  fill: var(--warn);
+  opacity: 0.35;
+}
+
+.map__trail,
+.map__link {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+}
+
+.map__trail {
+  stroke: rgba(var(--accent-rgb), 0.55);
+  stroke-width: 2.5;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: map-trail 2000ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes map-trail {
+  0% {
+    opacity: 0.9;
+    stroke-dashoffset: 1;
+  }
+  60% {
+    opacity: 0.9;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+.map__link {
+  stroke: rgba(242, 245, 243, 0.55);
+  stroke-width: 1.5;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: map-link 700ms var(--ease-out) forwards;
+}
+
+@keyframes map-link {
+  from {
+    opacity: 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* text over the picture (real HTML so it stays readable at any size) */
+.map__label,
+.map__new,
+.map__tag {
+  position: absolute;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.map__label {
+  transform: translateX(-50%);
+  color: var(--text-dim);
+}
+
+.map__new {
+  transform: translateX(-50%);
+  color: var(--text);
+  opacity: 0;
+  animation: map-text 500ms var(--ease-out) both;
+}
+
+.map__new.is-outside {
+  color: var(--warn);
+}
+
+@keyframes map-text {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.map__tag {
+  right: 8px;
+  top: 8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  background: rgba(7, 9, 10, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map__dot,
+  .map__island {
+    transition: none;
+  }
+  .map__dot-in,
+  .map__test,
+  .map__pulse {
+    animation: none;
+  }
+  .map__dot-in,
+  .map__test {
+    opacity: 1;
+  }
+  .map__trail {
+    display: none;
+  }
+  .map__link {
+    animation: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  .map__new {
+    animation: none;
+    opacity: 1;
+  }
+}

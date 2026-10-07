@@ -47,6 +47,13 @@
   color: var(--text-dim);
 }
 
+.test__map {
+  position: absolute;
+  left: 1056px;
+  top: 150px;
+  width: 262px;
+}
+
 .test__caption {
   position: absolute;
   left: 1056px;

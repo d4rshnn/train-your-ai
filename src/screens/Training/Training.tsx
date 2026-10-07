@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { getTrayRects } from '../../features/cards/trayHandoff'
 import { imageUrl } from '../../features/cards/images'
+import { MemoryMap } from '../../features/map/MemoryMap'
 import type { NetworkEngine } from '../../features/network/engine'
 import { CAPTION_1, CAPTION_2, FEED_SIZE, feedX, feedY, startTrainingSequence, type Sequence } from '../../features/network/trainingSequence'
 import { planTraining } from '../../features/network/training'
@@ -132,6 +133,9 @@ export function Training({ selection, speed = 1, onDone, engineRef, fromTray = t
           </svg>
           <strong>AI trained</strong>
           <p>It learned patterns from the examples it was given.</p>
+        </div>
+        <div className="training__map">
+          <MemoryMap ids={selection} stagger={0.5 / speed} growAfter={5.6 / speed} />
         </div>
         {skipReady && !stamp ? <p className="training__hint">Tap to skip</p> : null}
       </div>

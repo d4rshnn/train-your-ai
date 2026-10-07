@@ -1,34 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { TEST_EXAMPLES, type Example } from '../../data/examples'
+import { TEST_EXAMPLES } from '../../data/examples'
 import { Button } from '../../components/Button'
 import { Card } from '../../features/cards/Card'
-import { similarGroups } from '../../features/cards/groups'
-import { imageUrl } from '../../features/cards/images'
-import { resolveSelection } from '../../features/sim/predict'
+import { MemoryMap } from '../../features/map/MemoryMap'
 import type { SimResult } from '../../features/sim/types'
-import { guessWord, sureAboutCat, WHY, WHY_AUTO_MS, WHY_SKIP_AFTER_MS, whyVariant } from '../../features/why/copy'
+import { guessWord, mapCaption, sureAboutCat, WHY, WHY_AUTO_MS, WHY_SKIP_AFTER_MS, whyVariant } from '../../features/why/copy'
 import './Why.css'
 
 const HERO = TEST_EXAMPLES[0]
 
 type Props = { selection: string[]; yours: SimResult; onContinue: () => void }
 
-function Mini({ card, style }: { card: Example; style?: React.CSSProperties }) {
-  return (
-    <div className="mini" style={style}>
-      <img src={imageUrl(card)} alt="" draggable={false} />
-      <span className={`mini__label ${card.label === 'cat' ? 'is-cat' : ''}`}>{card.label === 'cat' ? 'CAT' : 'NOT'}</span>
-    </div>
-  )
-}
-
 /**
  * "Why?" (replaces the old Struggle screen). Plain words about what the AI saw and what it guessed. No decision here:
- * it moves on by itself after ~8 s; a tap (after 1.5 s) or the Continue button moves on at once.
+ * the memory map shows where the new cat landed; it moves on by itself after ~8 s; a tap (after 1.5 s) or the Continue button moves on at once.
  */
 export function Why({ selection, yours, onContinue }: Props) {
-  const cards = useMemo(() => resolveSelection(selection), [selection])
-  const { stacks, singles } = useMemo(() => similarGroups(cards), [cards])
+  const newCat = useMemo(() => ({ id: yours.featured.testId, pCat: yours.featured.probs.cat }), [yours])
   const variant = whyVariant(yours)
   const copy = WHY[variant]
   const [skipReady, setSkipReady] = useState(false)
@@ -64,28 +52,6 @@ export function Why({ selection, yours, onContinue }: Props) {
         <h2>{copy.headline}</h2>
         <p className="why__sub">{copy.sub}</p>
         <p className="why__analogy">{copy.analogy}</p>
-
-        <p className="why__label">What you gave it</p>
-        <div className={`strip ${singles.length > 7 ? 'strip--compact' : ''}`} aria-label="Your 10 examples">
-          {stacks.map((stack) => (
-            <div className="stack" key={stack[0].id}>
-              <div className="stack__fan" style={{ width: 108 + (stack.length - 1) * 28 }}>
-                {stack.map((c, i) => (
-                  <Mini key={c.id} card={c} style={{ left: i * 28, transform: `rotate(${(i - (stack.length - 1) / 2) * 5}deg)`, zIndex: i }} />
-                ))}
-              </div>
-              <p className="stack__label">
-                Very similar <b>×{stack.length}</b>
-              </p>
-            </div>
-          ))}
-          {singles.map((c) => (
-            <div className="single" key={c.id}>
-              <Mini card={c} />
-            </div>
-          ))}
-        </div>
-
         <div className="why__continue">
           <Button variant="ghost" className="why__continue-btn" onClick={go}>
             Continue →
@@ -95,6 +61,11 @@ export function Why({ selection, yours, onContinue }: Props) {
           </span>
           {skipReady ? <p className="why__hint">Tap to continue</p> : null}
         </div>
+      </div>
+
+      <div className="why__map">
+        <p className="why__mapcap">{mapCaption(variant)}</p>
+        <MemoryMap ids={selection} test={newCat} stagger={0.12} growAfter={1.6} testDelay={2.4} newLabel />
       </div>
     </section>
   )

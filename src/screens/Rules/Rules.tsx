@@ -21,7 +21,7 @@ export const RULES_COPY = {
   closing: 'Rules break. So we show it examples instead.',
 } as const
 
-/** Existing photos only: a fox passes the checklist wrongly; a cat lying down, ears and whiskers hard to see, fails it wrongly. */
+/** Existing photos only: a fox passes the checklist wrongly; a cat lying down (ears clear, whiskers hard to see) fails it on whiskers alone. */
 const FOX = TRAINING_EXAMPLES.find((e) => e.id === 'train-18')!
 const SLEEPER = TRAINING_EXAMPLES.find((e) => e.id === 'train-02')!
 
@@ -32,7 +32,7 @@ export function Rules({ dispatch }: { dispatch: Dispatch<Action> }) {
   const { phase, skipReady, onTap } = useScreenClock(PHASE_AT, RULES_END_SEC, () => dispatch({ type: 'ADVANCE' }))
   const showCat = phase >= 5
   const photo = showCat ? SLEEPER : FOX
-  const marks = showCat ? [false, false, true] : [true, true, true]
+  const marks = showCat ? [true, false, true] : [true, true, true]
   const marksOn = showCat ? phase >= 6 : phase >= 3
   const verdictOn = showCat ? phase >= 7 : phase >= 4
   const closing = phase >= 8

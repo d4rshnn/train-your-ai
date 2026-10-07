@@ -33,9 +33,9 @@
 
 .wia__panel {
   position: absolute;
-  top: 190px;
+  top: 196px;
   width: 600px;
-  height: 290px;
+  height: 310px;
   padding: 20px 28px;
   border-radius: 22px;
   border: 1px solid var(--line);
@@ -231,27 +231,18 @@
 .wia__coc {
   position: absolute;
   left: var(--safe);
-  top: 520px;
+  top: 556px;
   margin: 0;
-  font-size: 32px;
-  line-height: 1.2;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1.15;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
 }
 
-.wia__domains {
-  position: absolute;
-  left: var(--safe);
-  top: 590px;
-  width: 1270px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
-}
-
-.wia__coc.is-on,
-.wia__domains.is-on {
+.wia__coc.is-on {
   opacity: 1;
   transform: none;
 }
@@ -273,7 +264,6 @@
 @media (prefers-reduced-motion: reduce) {
   .wia__headline,
   .wia__coc,
-  .wia__domains,
   .wia__panel {
     transition: none;
   }

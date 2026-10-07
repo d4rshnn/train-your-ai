@@ -38,7 +38,7 @@ Add these to the address, for example `http://localhost:5173/?autoplay`. Combine
 
 | URL | What it does |
 |---|---|
-| `?autoplay` | Runs the whole story by itself in a loop, with no input: start screen, "What does the AI know?", the one pick (the worst achievable set, cards flying into the tray about 0.4 s apart), training, the new cat's guess, "why", the what-if replay with the better examples side by side, the payoff, a 6 s hold, then back to the start. It uses the real screens and animations and clicks the real buttons; only the clicks are scripted. One cycle takes about **1 minute 55 seconds**. **Any real key press or click exits** autoplay and returns to the normal start screen with a clean state (that click is swallowed, so it does not also press START). The cursor is hidden while it runs and the idle reset is off. |
+| `?autoplay` | Runs the whole story by itself in a loop, with no input: start screen, "What is AI?", "Rules", the learner, the one pick (the worst achievable set, cards flying into the tray about 0.4 s apart), training, the new cat's guess, "why", the what-if replay with the better examples side by side, "it's everywhere", the payoff, a 5 s hold, then back to the start. It uses the real screens and animations and clicks the real buttons; only the clicks are scripted. One cycle takes about **2 minutes 10 seconds**. **Any real key press or click exits** autoplay and returns to the normal start screen with a clean state (that click is swallowed, so it does not also press START). The cursor is hidden while it runs and the idle reset is off. |
 | `?autoplay&once` | Plays a single cycle and stops on the payoff screen (for screen recording). The RESTART button still works afterwards. |
 | `?kiosk` | Hides the mouse cursor. (`start-stall.bat` adds it.) |
 | `?quality=low` | Lighter rendering (fewer particles, no node halos, pixel ratio 1). **Remembered on this laptop**, so every later load keeps it. `?quality=high` remembers the full tier; `?quality=auto` forgets the choice. With nothing remembered, a machine with 2 or fewer CPU cores or 2 GB or less of memory starts light, and the app also drops to light by itself if frames are slow. |
@@ -67,7 +67,8 @@ Reduced motion: if the computer asks for reduced motion (Windows: Settings, Acce
 - `src/state` reducer for the screen flow
 - `src/features/sim` the deterministic prediction rule (and its tests)
 - `src/features/network` the network visual and the training / test sequences
-- `src/features/cards`, `explain`, `payoff` cards and tray, the S2 mosaic, S8 content
+- `src/features/cards`, `explain`, `payoff` cards and tray, the learner mosaic, payoff content
+- `src/features/map` the memory map (SVG) and `src/features/sim/mapLayout.ts` its deterministic layout (same numbers as the simulation, so it cannot disagree with the result)
 - `src/screens` one folder per screen
 - `src/data/examples.ts` the 28 example photos and their attributes
 - `scripts/serve.ps1`, `start-stall.bat` the offline stall launcher

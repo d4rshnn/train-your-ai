@@ -4,6 +4,7 @@ import { Button } from '../../components/Button'
 import { Card } from '../../features/cards/Card'
 import { captureTrayRects, recordTrayRects } from '../../features/cards/trayHandoff'
 import { Tray, type FlyRects } from '../../features/cards/Tray'
+import { MemoryMap } from '../../features/map/MemoryMap'
 import { TRAY_SIZE, type Action } from '../../state/machine'
 import { mulberry32 } from '../../util/rand'
 import './Choose.css'
@@ -75,12 +76,15 @@ export function Choose({ selection, dispatch }: Props) {
         </p>
 
         <div className="choose__row">
-          <span className="choose__count" aria-label={`${selection.length} of ${TRAY_SIZE} chosen`}>
-            <b>{selection.length}</b> / {TRAY_SIZE}
-          </span>
-          <Button variant="ghost" onClick={() => dispatch({ type: 'CLEAR' })} disabled={selection.length === 0}>
-            Clear
-          </Button>
+          <MemoryMap ids={selection} className="choose__map" labels={false} />
+          <div className="choose__side">
+            <span className="choose__count" aria-label={`${selection.length} of ${TRAY_SIZE} chosen`}>
+              <b>{selection.length}</b> / {TRAY_SIZE}
+            </span>
+            <Button variant="ghost" onClick={() => dispatch({ type: 'CLEAR' })} disabled={selection.length === 0}>
+              Clear
+            </Button>
+          </div>
         </div>
 
         <Button className="choose__train" onClick={() => {

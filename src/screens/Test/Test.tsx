@@ -6,6 +6,7 @@ import type { NetworkEngine } from '../../features/network/engine'
 import { displayPercents, OUTPUTS, planInference } from '../../features/network/inference'
 import { CAPTION_NEW, startTestSequence, sureCaption, TEST_CARD } from '../../features/network/testSequence'
 import type { Sequence } from '../../features/network/trainingSequence'
+import { MemoryMap } from '../../features/map/MemoryMap'
 import type { SimResult } from '../../features/sim/types'
 import './Test.css'
 
@@ -18,6 +19,8 @@ const SKIP_AFTER_MS = 1500
 const CONDENSED_HOLD_MS = 700
 
 type Props = {
+  /** The picks the AI learned from (the map shows them). */
+  selection: string[]
   result: SimResult
   /** 1 for the visitor's own run; 2 for the what-if replay. */
   speed?: number
@@ -25,11 +28,12 @@ type Props = {
   engineRef: MutableRefObject<NetworkEngine | null>
 }
 
-export function Test({ result, speed = 1, onDone, engineRef }: Props) {
+export function Test({ selection, result, speed = 1, onDone, engineRef }: Props) {
   const prediction = result.featured
   const percents = useMemo(() => displayPercents(prediction.probs), [prediction])
   const [caption, setCaption] = useState<'new' | 'done'>('new')
   const [barsOn, setBarsOn] = useState(false)
+  const [mapOn, setMapOn] = useState(false)
   const [verdictOn, setVerdictOn] = useState(false)
   const [skipReady, setSkipReady] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -58,6 +62,7 @@ export function Test({ result, speed = 1, onDone, engineRef }: Props) {
       ui: {
         card: cardRef.current,
         setCaption,
+        showMap: () => setMapOn(true),
         showBars: () => setBarsOn(true),
         setBars: (p) =>
           percents.forEach((pct, i) => {
@@ -90,6 +95,7 @@ export function Test({ result, speed = 1, onDone, engineRef }: Props) {
     if (skipReady && seq.current && !seq.current.skipped) seq.current.skip()
   }
 
+  const newCat = useMemo(() => ({ id: prediction.testId, pCat: prediction.probs.cat }), [prediction])
   const good = prediction.correct
   const winner = OUTPUTS.indexOf(prediction.predicted)
 
@@ -103,6 +109,12 @@ export function Test({ result, speed = 1, onDone, engineRef }: Props) {
         <Card example={HERO} unseen size={TEST_CARD.size} />
         <p className="test__tag">New image — never seen before</p>
       </div>
+
+      {mapOn ? (
+        <div className="test__map">
+          <MemoryMap ids={selection} test={newCat} stagger={0.04} testDelay={speed > 1 ? 0.2 : 0.45} labels />
+        </div>
+      ) : null}
 
       <p className="test__caption" key={caption}>
         {caption === 'new' ? CAPTION_NEW : sureCaption(percents[0])}

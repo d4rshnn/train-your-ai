@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { Button } from '../../components/Button'
-import { imageUrl } from '../../features/cards/images'
+import { MemoryMap } from '../../features/map/MemoryMap'
 import type { NetworkEngine } from '../../features/network/engine'
 import { displayPercents, OUTPUTS } from '../../features/network/inference'
 import { drive, Timeline } from '../../features/network/timeline'
 import type { Alternate } from '../../features/sim/alternate'
-import { resolveSelection } from '../../features/sim/predict'
 import type { SimResult } from '../../features/sim/types'
 import { arrowLabel, compareLine, introLine, titles, trendOf, WHATIF_HEADLINE, WHATIF_AFTER_SKIP_MS, WHATIF_HOLD_MS, WHATIF_SKIP_AFTER_MS, type Trend } from '../../features/whatif/copy'
 import { Test } from '../Test/Test'
@@ -62,7 +61,7 @@ export function WhatIf({ selection, yours, alternate, other, engineRef, onNetwor
           {phase === 'train' ? (
             <Training key="t" selection={alternate.ids} speed={CONDENSED_SPEED} fromTray={false} engineRef={engineRef} onDone={() => setPhase('test')} />
           ) : (
-            <Test key="s" result={other} speed={CONDENSED_SPEED} engineRef={engineRef} onDone={() => setPhase('compare')} />
+            <Test key="s" selection={alternate.ids} result={other} speed={CONDENSED_SPEED} engineRef={engineRef} onDone={() => setPhase('compare')} />
           )}
         </>
       ) : (
@@ -74,21 +73,19 @@ export function WhatIf({ selection, yours, alternate, other, engineRef, onNetwor
 
 type Tone = 'plain' | 'up' | 'down'
 
-function Side({ title, ids, result, refs, tone }: { title: string; ids: string[]; result: SimResult; refs: SideRefs; tone: Tone }) {
-  const cards = useMemo(() => resolveSelection(ids), [ids])
+function Side({ title, ids, result, refs, tone, mapDelay }: { title: string; ids: string[]; result: SimResult; refs: SideRefs; tone: Tone; mapDelay: number }) {
+  const newCat = useMemo(() => ({ id: result.featured.testId, pCat: result.featured.probs.cat }), [result])
   const percents = displayPercents(result.featured.probs)
   return (
     <div className={`wi-side is-${tone}`} ref={refs.root}>
       <h3>{title}</h3>
-      <div className="wi-thumbs" aria-hidden="true">
-        {cards.map((c) => (
-          <img key={c.id} src={imageUrl(c)} alt="" draggable={false} />
-        ))}
+      <div className="wi-row">
+        <MemoryMap ids={ids} test={newCat} className="wi-map" stagger={0.05} growAfter={0.5} testDelay={mapDelay} labels tag={false} />
+        <p className="wi-count">
+          <b ref={refs.count}>0</b>
+          <span> of {result.predictions.length} correct</span>
+        </p>
       </div>
-      <p className="wi-count">
-        <b ref={refs.count}>0</b>
-        <span> of {result.predictions.length} correct</span>
-      </p>
       <p className="wi-sure">How sure it was about the new cat (simulated)</p>
       <div className="wi-bars">
         {OUTPUTS.map((name, i) => (
@@ -188,12 +185,12 @@ function Compare({ selection, yours, alternate, other, onContinue }: Pick<Props,
       <h2 className="wi-headline">{WHATIF_HEADLINE}</h2>
       <p className={`wi-line ${doneOn ? 'is-on' : ''}`}>{compareLine(trend, alternate.direction)}</p>
 
-      <Side title={t.yours} ids={selection} result={yours} refs={left} tone="plain" />
+      <Side title={t.yours} ids={selection} result={yours} refs={left} tone="plain" mapDelay={0.5} />
       <div className={`wi-mid ${arrowOn ? 'is-on' : ''}`}>
         <Arrow trend={trend} />
         <span className={`wi-mid__label is-${trend}`}>{arrowLabel(trend, diff)}</span>
       </div>
-      <Side title={t.other} ids={alternate.ids} result={other} refs={right} tone={trend === 'up' ? 'up' : 'down'} />
+      <Side title={t.other} ids={alternate.ids} result={other} refs={right} tone={trend === 'up' ? 'up' : 'down'} mapDelay={1.9} />
 
       <div className={`wi-foot ${doneOn ? 'is-on' : ''}`}>
         <span className="wi-sim">Simulated</span>

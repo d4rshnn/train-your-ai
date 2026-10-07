@@ -1,19 +1,18 @@
 import type { CSSProperties, Dispatch } from 'react'
-import { DomainChips } from '../../components/DomainChips'
 import { TRAINING_EXAMPLES } from '../../data/examples'
 import { imageUrl } from '../../features/cards/images'
 import type { Action } from '../../state/machine'
 import { useScreenClock } from '../useScreenClock'
 import './WhatIsAi.css'
 
-/** Beats in seconds: the examples idea, then COC, then the domains. The screen ends at WHAT_IS_AI_END_SEC. */
-const PHASE_AT = [2.8, 5.0, 5.9] as const
-export const WHAT_IS_AI_END_SEC = 8.6
+/** Beats in seconds: the examples idea, then the COC line. The screen ends at WHAT_IS_AI_END_SEC. */
+const PHASE_AT = [2.8, 5.0] as const
+export const WHAT_IS_AI_END_SEC = 8
 
 export const WHAT_IS_AI = {
   rules: 'Most software follows rules people write.',
   learns: 'AI is different. It learns from examples.',
-  coc: 'At COC, we build things like this. And lots more.',
+  coc: 'At COC, we build things like this.',
 } as const
 
 const STEPS = ['Step 1', 'Step 2', 'Step 3']
@@ -30,7 +29,7 @@ function Writer() {
   )
 }
 
-/** "Rules" vs "learns from examples", then COC and its domains. About 8 s, moves on by itself; a tap skips after 1.5 s. */
+/** "Rules" vs "learns from examples", then a line about COC. About 8 s, moves on by itself; a tap skips after 1.5 s. */
 export function WhatIsAi({ dispatch }: { dispatch: Dispatch<Action> }) {
   const { phase, skipReady, onTap } = useScreenClock(PHASE_AT, WHAT_IS_AI_END_SEC, () => dispatch({ type: 'ADVANCE' }))
 
@@ -76,9 +75,6 @@ export function WhatIsAi({ dispatch }: { dispatch: Dispatch<Action> }) {
       </div>
 
       <p className={`wia__coc ${phase >= 2 ? 'is-on' : ''}`}>{WHAT_IS_AI.coc}</p>
-      <div className={`wia__domains ${phase >= 3 ? 'is-on' : ''}`}>
-        <DomainChips />
-      </div>
 
       {skipReady ? <p className="wia__hint">Tap to continue</p> : null}
     </section>

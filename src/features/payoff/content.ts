@@ -24,8 +24,6 @@ export const BEAT = {
   done: 5.9,
 } as const
 
-export const SIGNPOST = 'Other COC domains'
-
 /** When the travelling pulse reaches stage i (0..4), in seconds. */
 export const stageTime = (i: number, stages = PIPELINE_LABELS.length) => BEAT.pulseStart + (BEAT.pulseDur * i) / (stages - 1)
 

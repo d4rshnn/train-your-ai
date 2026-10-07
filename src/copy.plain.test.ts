@@ -29,6 +29,7 @@ const PRE_PAYOFF_FILES = [
   'features/cards/Card.tsx',
   'features/cards/Tray.tsx',
   'features/explain/mosaic.ts',
+  'features/map/MemoryMap.tsx',
   'features/network/Network.tsx',
   'features/network/NetworkSvg.tsx',
   'features/network/layout.ts',
@@ -46,8 +47,6 @@ const PRE_PAYOFF_FILES = [
   'screens/Why/Why.tsx',
   'screens/WhatIf/WhatIf.tsx',
   'screens/Everywhere/Everywhere.tsx',
-  'components/DomainChips.tsx',
-  'data/domains.ts',
 ]
 
 function withoutComments(code: string): string {
@@ -87,7 +86,7 @@ describe('plain language before the payoff screen', () => {
     for (const line of [
       'Most software follows rules people write.',
       'AI is different. It learns from examples.',
-      'At COC, we build things like this. And lots more.',
+      'At COC, we build things like this.',
       'Pointy ears? A fox has them.',
       'Whiskers? Not always visible.',
       'Rules break. So we show it examples instead.',
@@ -100,6 +99,8 @@ describe('plain language before the payoff screen', () => {
       'It had only seen cats like these.',
       'This one looked different, so it guessed.',
       'It had seen enough different cats to recognise a new one.',
+      'The new cat landed outside the cats it knew.',
+      'The new cat landed inside the cats it knew.',
       'sure it',
     ])
       expect(all, line).toContain(line)

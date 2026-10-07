@@ -170,6 +170,7 @@
 }
 
 .training__caption.is-off {
+  animation: none;
   opacity: 0;
 }
 
@@ -188,10 +189,11 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 300px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  top: 186px;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+  gap: 8px 12px;
   opacity: 0;
   transform: translateY(8px);
   pointer-events: none;
@@ -203,10 +205,14 @@
   transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
 }
 
+.training__stamp p {
+  grid-column: 1 / -1;
+}
+
 .training__stamp strong {
+  font-size: 28px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 34px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--accent);
@@ -243,6 +249,13 @@
   to {
     stroke-dashoffset: 0;
   }
+}
+
+.training__map {
+  position: absolute;
+  left: 0;
+  top: 332px;
+  width: 262px;
 }
 
 .training__hint {

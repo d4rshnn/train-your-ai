@@ -1,4 +1,3 @@
-import type { Example } from '../../data/examples'
 import { displayPercents } from '../network/inference'
 import type { SimResult } from '../sim/types'
 
@@ -19,8 +18,8 @@ export const sureAboutCat = (r: SimResult) => `${displayPercents(r.featured.prob
 /** What the AI said it was, in plain words. */
 export const guessWord = (r: SimResult) => ({ cat: 'cat', dog: 'dog', other: 'something else' })[r.featured.predicted]
 
-/** The "Very similar" stack label is only shown when the picks really were alike (3+ the same look). */
-export const hasSimilarStack = (stacks: Example[][]) => stacks.length > 0
+/** One plain line over the memory map, describing where the new cat landed (the same result as the numbers). */
+export const mapCaption = (variant: WhyVariant) => (variant === 'good' ? 'The new cat landed inside the cats it knew.' : 'The new cat landed outside the cats it knew.')
 
 /** Seconds before the Why screen moves on by itself. */
 export const WHY_AUTO_MS = 8000

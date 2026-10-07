@@ -22,6 +22,8 @@ const ease = (p: number) => 1 - Math.pow(1 - p, 3)
 export type TestUi = {
   card: HTMLElement | null
   setCaption(which: 'new' | 'done'): void
+  /** The memory map appears where the unseen card was, once the card has gone into the network. */
+  showMap(): void
   /** Bars fade in. */
   showBars(): void
   /** p in 0..1: widths and numbers count up to the final percentages. */
@@ -108,6 +110,7 @@ export function startTestSequence({ engine, plan, prediction, speed, ui }: TestS
   tl.at(TEST_BEAT.bars - 0.1, () => outNodes.forEach((n, i) => engine.flare(n, plan.coherent ? (i === predictedIdx ? 1 : 0.2) : 0.35 + 0.6 * probs[i])))
 
   // 3.4 - 4.6: bars appear and count up. 4.6 - 5.0: verdict.
+  tl.at(TEST_BEAT.shrink + TEST_BEAT.shrinkDur, () => ui.showMap())
   tl.at(TEST_BEAT.bars, () => ui.showBars())
   tl.tween(TEST_BEAT.bars, TEST_BEAT.barsDur, (p) => ui.setBars(ease(p)))
   tl.at(TEST_BEAT.verdict, () => {

@@ -1,0 +1,170 @@
+.exam {
+  position: absolute;
+  inset: 0;
+}
+
+.exam__svg {
+  position: absolute;
+  left: 183px;
+  top: 190px;
+  width: 1000px;
+  height: 330px;
+  overflow: visible;
+}
+
+.exam__svg path,
+.exam__svg circle,
+.exam__svg rect {
+  fill: none;
+  stroke: var(--text-dim);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.exam__svg .exam__desk {
+  stroke: var(--line);
+  stroke-width: 3;
+  animation: exam-in 500ms var(--ease-out) both;
+}
+
+.exam__student {
+  animation: exam-in 600ms 100ms var(--ease-out) both;
+}
+
+.exam__svg .exam__student circle,
+.exam__svg .exam__student path {
+  stroke: var(--text);
+}
+
+.exam__svg .exam__eyes {
+  stroke-width: 5;
+}
+
+/* practice questions: all the same shape, the same green circle */
+.exam__card {
+  animation: exam-drop 500ms var(--ease-out) both;
+}
+
+.exam__svg .exam__card rect {
+  fill: rgba(19, 26, 22, 0.85);
+  stroke: rgba(var(--accent-rgb), 0.55);
+}
+
+.exam__svg .exam__card path {
+  stroke: var(--line);
+}
+
+.exam__svg .exam__icon {
+  stroke: var(--accent);
+  fill: rgba(var(--accent-rgb), 0.14);
+}
+
+/* the new type of question: a different shape and colour, arriving from the right */
+.exam__new {
+  animation: exam-arrive 700ms var(--ease-out) both;
+}
+
+.exam__svg .exam__new rect {
+  fill: rgba(19, 26, 22, 0.85);
+  stroke: var(--warn);
+}
+
+.exam__svg .exam__new path {
+  stroke: var(--line);
+}
+
+.exam__svg .exam__new .exam__icon {
+  stroke: var(--warn);
+  fill: rgba(227, 179, 65, 0.14);
+}
+
+.exam__mark {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: exam-pop 700ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+.exam__svg .exam__mark path,
+.exam__svg .exam__mark circle {
+  stroke: var(--warn);
+  stroke-width: 5;
+}
+
+.exam__svg .exam__mark circle {
+  fill: var(--warn);
+}
+
+@keyframes exam-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes exam-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes exam-arrive {
+  from {
+    opacity: 0;
+    transform: translateX(160px);
+  }
+}
+
+@keyframes exam-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(-12deg);
+  }
+  70% {
+    transform: scale(1.15) rotate(6deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* caption, then the bridge to AI */
+.exam__caption {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  top: 540px;
+  margin: 0;
+  text-align: center;
+  font-size: 28px;
+  line-height: 1.25;
+  color: var(--text-dim);
+  animation: exam-in 600ms 0.6s var(--ease-out) both;
+}
+
+.exam__bridge {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  top: 590px;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1.15;
+  animation: exam-in 600ms 4.4s var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exam__desk,
+  .exam__student,
+  .exam__card,
+  .exam__new,
+  .exam__mark,
+  .exam__caption,
+  .exam__bridge {
+    animation: none;
+  }
+}

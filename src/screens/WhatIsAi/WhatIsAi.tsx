@@ -6,8 +6,8 @@ import { useScreenClock } from '../useScreenClock'
 import './WhatIsAi.css'
 
 /** Beats in seconds: the examples idea, then the COC line. The screen ends at WHAT_IS_AI_END_SEC. */
-const PHASE_AT = [2.8, 5.0] as const
-export const WHAT_IS_AI_END_SEC = 8
+const PHASE_AT = [3.6, 7.0] as const
+export const WHAT_IS_AI_END_SEC = 11.5
 
 export const WHAT_IS_AI = {
   rules: 'Most software follows rules people write.',
@@ -29,9 +29,9 @@ function Writer() {
   )
 }
 
-/** "Rules" vs "learns from examples", then a line about COC. About 8 s, moves on by itself; a tap skips after 1.5 s. */
+/** "Rules" vs "learns from examples", then a line about COC. About 11 s, moves on by itself; a tap skips after 1.5 s. */
 export function WhatIsAi({ dispatch }: { dispatch: Dispatch<Action> }) {
-  const { phase, skipReady, onTap } = useScreenClock(PHASE_AT, WHAT_IS_AI_END_SEC, () => dispatch({ type: 'ADVANCE' }))
+  const { phase, onTap } = useScreenClock(PHASE_AT, WHAT_IS_AI_END_SEC, () => dispatch({ type: 'ADVANCE' }))
 
   return (
     <section className="wia" onPointerDown={onTap}>
@@ -76,7 +76,7 @@ export function WhatIsAi({ dispatch }: { dispatch: Dispatch<Action> }) {
 
       <p className={`wia__coc ${phase >= 2 ? 'is-on' : ''}`}>{WHAT_IS_AI.coc}</p>
 
-      {skipReady ? <p className="wia__hint">Tap to continue</p> : null}
+      <p className="wia__hint">Tap for next</p>
     </section>
   )
 }

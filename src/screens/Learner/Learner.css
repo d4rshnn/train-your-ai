@@ -15,6 +15,12 @@
   line-height: 1.1;
 }
 
+.wak__card.is-gone {
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out), transform 900ms var(--ease-out);
+  animation: none;
+}
+
 .wak__card {
   position: absolute;
   left: 0;

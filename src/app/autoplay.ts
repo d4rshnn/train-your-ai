@@ -13,7 +13,7 @@ export function parseAutoplay(search: string): { enabled: boolean; once: boolean
  */
 export const TIMING = {
   attract: 24_000, // S1 on screen before START
-  prePick: 7_000, // Choose: before the first card (read the screen)
+  prePick: 5_000, // Choose: before the first card (read the screen)
   pick: 400, // between cards flying into the tray
   prePlay: 4_000, // tray full, before TRAIN
   compareHold: 8_000, // What if: after the side-by-side has counted up, before CONTINUE
@@ -87,7 +87,7 @@ export async function runAutoplay({ once, signal, timing = TIMING, onFinished }:
       await sleep(t.attract, signal)
       await press('.attract__start', signal)
 
-      // What is AI?, Rules and the learner move on by themselves (about 28 s), straight into Choose
+      // What is AI?, Rules and the learner move on by themselves (about 38 s), straight into Choose
 
       // Choose: the one and only pick. The worst achievable set, so the story shows the struggle and then the what-if.
       await waitFor('.choose__grid', signal)

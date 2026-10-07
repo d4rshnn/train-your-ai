@@ -41,6 +41,7 @@ const PRE_PAYOFF_FILES = [
   'screens/WhatIsAi/WhatIsAi.tsx',
   'screens/Rules/Rules.tsx',
   'screens/Learner/Learner.tsx',
+  'screens/Learner/ExamStrip.tsx',
   'screens/Choose/Choose.tsx',
   'screens/Training/Training.tsx',
   'screens/Test/Test.tsx',
@@ -90,7 +91,10 @@ describe('plain language before the payoff screen', () => {
       'Pointy ears? A fox has them.',
       'Whiskers? Not always visible.',
       'Rules break. So we show it examples instead.',
-      'Like a kid who has only ever met white cats.',
+      'Practise only one type of question, and a new type trips you up.',
+      'An AI is the same. The examples are its practice.',
+      'Same as practising only one type of question.',
+      'Same as practising a good mix of questions.',
       'Same idea. Different examples.',
       'Choose 10 examples to teach your AI.',
       'A new cat. It has never seen this one.',
@@ -104,6 +108,12 @@ describe('plain language before the payoff screen', () => {
       'sure it',
     ])
       expect(all, line).toContain(line)
+  })
+
+  it('uses the exam analogy, not the white-cats kid', () => {
+    const all = PRE_PAYOFF_FILES.flatMap((f) => visibleText(read(f))).join(' ')
+    expect(all).not.toMatch(/kid who/i)
+    expect(all).not.toMatch(/only ever met white cats/i)
   })
 
   it('still lets the payoff screen use the vocabulary', () => {

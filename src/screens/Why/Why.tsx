@@ -84,8 +84,8 @@ export function Why({ selection, yours, onContinue }: Props) {
 
         <div className="why__body">
           <div className="why__text">
-            <p className="why__sub">{copy.sub}</p>
             <p className="why__analogy">{copy.analogy}</p>
+            <p className="why__sub">{copy.sub}</p>
             <p className="why__mapcap">{mapCaption(variant)}</p>
             <div className="why__continue">
               <Button variant="ghost" className="why__continue-btn" onClick={go}>

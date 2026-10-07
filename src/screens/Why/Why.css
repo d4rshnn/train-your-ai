@@ -133,14 +133,14 @@
 }
 
 .why__sub {
-  margin: 0;
+  margin: 14px 0 0;
   font-size: 24px;
   line-height: 1.28;
   color: var(--text-dim);
 }
 
 .why__analogy {
-  margin: 14px 0 0;
+  margin: 0;
   font-size: 24px;
   line-height: 1.28;
   color: var(--text);

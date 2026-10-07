@@ -3,8 +3,8 @@ import type { SimResult } from '../sim/types'
 
 /** Copy deck, PLAN_V2 section 6. Plain words only: "sure" for confidence, never "accuracy". */
 export const WHY = {
-  weak: { headline: 'It had only seen cats like these.', sub: 'This one looked different, so it guessed.', analogy: 'Like a kid who has only ever met white cats.' },
-  good: { headline: 'It had seen enough different cats to recognise a new one.', sub: 'A good mix of examples gives it more to compare with.', analogy: 'Like a kid who has met all kinds of cats.' },
+  weak: { headline: 'It had only seen cats like these.', sub: 'This one looked different, so it guessed.', analogy: 'Same as practising only one type of question.' },
+  good: { headline: 'It had seen enough different cats to recognise a new one.', sub: 'A good mix of examples gives it more to compare with.', analogy: 'Same as practising a good mix of questions.' },
 } as const
 
 export type WhyVariant = keyof typeof WHY

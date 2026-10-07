@@ -5,9 +5,9 @@ import type { Action } from '../../state/machine'
 import { useScreenClock } from '../useScreenClock'
 import './Rules.css'
 
-/** Beats in seconds (see RULES_PHASES). The screen ends at RULES_END_SEC, under the 10 s ceiling. */
-const PHASE_AT = [0.2, 1.8, 2.4, 3.6, 4.8, 5.4, 6.6, 7.4] as const
-export const RULES_END_SEC = 9.6
+/** Beats in seconds (see RULES_PHASES). The screen ends at RULES_END_SEC, under the 14 s ceiling. */
+const PHASE_AT = [0.3, 2.3, 3.2, 4.9, 6.5, 7.3, 8.9, 10.1] as const
+export const RULES_END_SEC = 13.4
 
 export const RULES_COPY = {
   headline: 'Can you write rules for “cat”?',
@@ -27,9 +27,9 @@ const SLEEPER = TRAINING_EXAMPLES.find((e) => e.id === 'train-02')!
 
 const tick = (ok: boolean) => (ok ? '✓' : '✗')
 
-/** "Rules don't work". A checklist for "cat" is fooled both ways. About 10 s; a tap skips after 1.5 s. */
+/** "Rules don't work". A checklist for "cat" is fooled both ways. About 13 s; a tap skips after 1.5 s. */
 export function Rules({ dispatch }: { dispatch: Dispatch<Action> }) {
-  const { phase, skipReady, onTap } = useScreenClock(PHASE_AT, RULES_END_SEC, () => dispatch({ type: 'ADVANCE' }))
+  const { phase, onTap } = useScreenClock(PHASE_AT, RULES_END_SEC, () => dispatch({ type: 'ADVANCE' }))
   const showCat = phase >= 5
   const photo = showCat ? SLEEPER : FOX
   const marks = showCat ? [true, false, true] : [true, true, true]
@@ -76,7 +76,7 @@ export function Rules({ dispatch }: { dispatch: Dispatch<Action> }) {
 
       {closing ? <p className="rules__closing">{RULES_COPY.closing}</p> : null}
 
-      {skipReady ? <p className="rules__hint">Tap to continue</p> : null}
+      <p className="rules__hint">Tap for next</p>
     </section>
   )
 }

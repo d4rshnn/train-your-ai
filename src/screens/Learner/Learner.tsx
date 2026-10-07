@@ -6,19 +6,17 @@ import type { NetworkEngine } from '../../features/network/engine'
 import { drive, Timeline } from '../../features/network/timeline'
 import type { Action } from '../../state/machine'
 import { SKIP_AFTER_MS } from '../useScreenClock'
+import { ExamStrip } from './ExamStrip'
 import './Learner.css'
 
 /** The cat used for the explainer: a clear, front-facing training card. */
 const CAT = TRAINING_EXAMPLES[0]
 
-/** Each step advances on a tap or after 2.5 s; the last one holds for 2.5 s too, then the screen moves on (10 s in total). */
-export const STEP_MS = 2500
-export const CAPTIONS = [
-  'This is a cat. To you, obviously.',
-  'To an AI, a picture starts as just numbers.',
-  'It has to find patterns.',
-  'Like a kid who has only ever met white cats.',
-] as const
+/** The first three steps advance on a tap or after 2.4 s; then the exam-practice strip plays (EXAM_MS) and the screen moves on: 13.6 s in all. */
+export const STEP_MS = 2400
+export const EXAM_MS = 6400
+export const CAPTIONS = ['This is a cat. To you, obviously.', 'To an AI, a picture starts as just numbers.', 'It has to find patterns.'] as const
+export const EXAM_HEADLINE = 'Think of practising for an exam.'
 
 /** Stage geometry (px). The card starts big and centred, then collapses to the left of the network. */
 const BIG = { x: 483, y: 170, size: 400 }
@@ -145,7 +143,7 @@ export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
   }, [step, engineRef])
 
   useEffect(() => {
-    onNetworkHidden(step < 2)
+    onNetworkHidden(step < 2 || step >= 3)
     return () => onNetworkHidden(false)
   }, [step, onNetworkHidden])
 
@@ -157,7 +155,7 @@ export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
     dispatch({ type: 'ADVANCE' })
   }, [dispatch])
   useEffect(() => {
-    const t = window.setTimeout(step >= 3 ? leave : next, STEP_MS)
+    const t = window.setTimeout(step >= 3 ? leave : next, step >= 3 ? EXAM_MS : STEP_MS)
     const r = step >= 3 ? window.setTimeout(() => setLastReady(true), SKIP_AFTER_MS) : undefined
     return () => {
       window.clearTimeout(t)
@@ -169,9 +167,9 @@ export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
 
   return (
     <section className="wak" onPointerDown={step < 3 ? next : lastReady ? leave : undefined}>
-      <h2 className="wak__headline">An AI doesn&apos;t know what a cat is.</h2>
+      <h2 className="wak__headline" key={step >= 3 ? 'exam' : 'cat'}>{step >= 3 ? EXAM_HEADLINE : 'An AI doesn’t know what a cat is.'}</h2>
 
-      <div className="wak__card" style={{ transform: pos, width: BIG.size, height: BIG.size }}>
+      <div className={`wak__card ${step >= 3 ? 'is-gone' : ''}`} style={{ transform: pos, width: BIG.size, height: BIG.size }}>
         {/* the photo is shown with the same head-and-shoulders crop that the mosaic is sampled from */}
         <img
           ref={imgRef}
@@ -184,7 +182,7 @@ export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
       </div>
 
       {/* soft rings: patterns the model might learn to use, not detectors. Stage coordinates over the small mosaic. */}
-      <svg className={`wak__rings ${step >= 2 ? 'is-on' : ''}`} viewBox="0 0 1366 768" aria-hidden={step < 2}>
+      <svg className={`wak__rings ${step === 2 ? 'is-on' : ''}`} viewBox="0 0 1366 768" aria-hidden={step < 2}>
         {HIGHLIGHTS.map((h, i) => {
           const last = h.rings[h.rings.length - 1]
           const ax = SMALL.x + (last.cx + last.rx * Math.cos(ANCHOR_ANGLE[i])) * SMALL.size
@@ -202,17 +200,21 @@ export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
           )
         })}
       </svg>
-      <p className={`wak__patterns ${step >= 2 ? 'is-on' : ''}`} style={{ left: LABEL_X, top: LABEL_Y[0] - 40 }}>
+      <p className={`wak__patterns ${step === 2 ? 'is-on' : ''}`} style={{ left: LABEL_X, top: LABEL_Y[0] - 40 }}>
         Patterns it could use
       </p>
 
-      <p className={`wak__tag ${step >= 1 ? 'is-on' : ''}`}>Simplified view</p>
+      <p className={`wak__tag ${step >= 1 && step < 3 ? 'is-on' : ''}`}>Simplified view</p>
 
-      <p className={`wak__caption ${step >= 2 ? 'is-left' : ''}`} key={step} role="status">
-        {CAPTIONS[step]}
-      </p>
+      {step < 3 ? (
+        <p className={`wak__caption ${step >= 2 ? 'is-left' : ''}`} key={step} role="status">
+          {CAPTIONS[step]}
+        </p>
+      ) : (
+        <ExamStrip />
+      )}
 
-      {step < 3 || lastReady ? <p className="wak__hint">Tap to continue</p> : null}
+      <p className="wak__hint">Tap for next</p>
     </section>
   )
 }

@@ -21,14 +21,25 @@ function withoutComments(code: string): string {
  * Educational-accuracy rules (plan 6, 10): this is a simulation, not a real trained model, and the highlighted patterns
  * on screen 2 are patterns, never "detectors". No wording that claims otherwise may appear in the UI source.
  */
-const BANNED: [RegExp, string][] = [
+/**
+ * Each rule may list files where it does not apply. The intro chapter's AI-layers screen names real fields and examples
+ * ("deep learning", ChatGPT); everywhere else those stay banned.
+ */
+const INTRO_ALLOWED = ['/screens/AiLayers/AiLayers.tsx']
+
+const BANNED: [RegExp, string, string[]?][] = [
   [/detector/i, 'the S2 highlights are patterns, not detectors'],
   [/millions?\b/i, 'no "stores millions of ..." claims'],
   [/\bstores?\b/i, 'the model does not store photos or ears'],
   [/\bmemori[sz]/i, 'the model does not memorise images'],
-  [/(this|it|that) (is|was) (a )?real|real (neural network|trained model|AI)/i, 'no claim of a real trained model'],
+  [/(this|it|that) (is|was) (a )?real|real (neural network|trained model|AI)/i, 'no claim of a real trained model'],
   [/\b(exactly|always|never) (looks|learns|knows)/i, 'no absolute claims about what a network looks for'],
-  [/\bGPT|ChatGPT|deep learning\b/i, 'no claims that this is how big AI products work'],
+  [/\bGPT|ChatGPT|deep learning\b/i, 'no claims that this is how big AI products work', INTRO_ALLOWED],
+  // quantum honesty (PLAN_V2 addendum v2.1): no "every answer at once", no "beats normal AI today"
+  [/(every|all)( possible)? (answers?|states?|options?|solutions?|values?) (at once|simultaneously|in parallel)/i, 'quantum does not "try every answer at once"'],
+  [/\bsimultaneous(ly)?\b/i, 'no "at the same time" claims about quantum'],
+  [/quantum[^.]{0,60}\b(beats?|outperforms?|faster than|better than)\b/i, 'no claim that quantum beats normal AI or computers today'],
+  [/\bquantum supremacy\b/i, 'no "quantum supremacy" claims'],
 ]
 
 describe('copy audit', () => {
@@ -38,9 +49,12 @@ describe('copy audit', () => {
     expect(files.length).toBeGreaterThan(40)
   })
 
-  for (const [re, why] of BANNED) {
+  for (const [re, why, allowedIn = []] of BANNED) {
     it(`never says ${re} (${why})`, () => {
-      const hits = files.filter((f) => re.test(withoutComments(readFileSync(f, 'utf8')))).map((f) => f.replace(SRC, ''))
+      const hits = files
+        .filter((f) => re.test(withoutComments(readFileSync(f, 'utf8'))))
+        .map((f) => f.replace(SRC, '').split('\\').join('/'))
+        .filter((f) => !allowedIn.includes(f))
       expect(hits).toEqual([])
     })
   }
@@ -52,6 +66,7 @@ describe('copy audit', () => {
     expect(read('features/network/Network.tsx')).toContain('Conceptual view')
     expect(read('screens/Learner/Learner.tsx')).toContain('Simplified view')
     expect(read('features/map/MemoryMap.tsx')).toContain('Simplified view')
+    for (const f of ['QuantumBit/QuantumBit.tsx', 'QuantumRun/QuantumRun.tsx', 'QuantumMeets/QuantumMeets.tsx']) expect(read(`screens/${f}`), f).toContain('Simplified view')
     expect(read('screens/Test/Test.tsx')).toContain('How sure (simulated)')
     expect(read('screens/WhatIf/WhatIf.tsx')).toContain('Simulated')
     expect(read('screens/WhatIf/WhatIf.tsx')).toContain('How sure it was about the new cat (simulated)')

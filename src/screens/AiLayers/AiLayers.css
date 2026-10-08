@@ -1,0 +1,197 @@
+.ail {
+  position: absolute;
+  inset: 0;
+}
+
+.ail__headline {
+  position: absolute;
+  left: var(--safe);
+  top: 92px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-headline);
+  line-height: 1.1;
+  animation: ail-in 500ms var(--ease-out) both;
+}
+
+@keyframes ail-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---- the nested circles ---- */
+.ail__circles {
+  position: absolute;
+  left: 96px;
+  top: 190px;
+  width: 440px;
+  height: 440px;
+}
+
+.ail__ring {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 50%;
+  border: 1.5px solid rgba(var(--accent-rgb), 0.35);
+  background: rgba(var(--accent-rgb), 0.04);
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out), transform 700ms var(--ease-out), border-color 600ms, box-shadow 600ms;
+}
+
+.ail__ring.is-on {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+
+.ail__ring span {
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.ail__ring--ai {
+  width: 440px;
+  height: 440px;
+}
+
+.ail__ring--ml {
+  width: 312px;
+  height: 312px;
+  border-color: rgba(var(--accent-rgb), 0.55);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+
+.ail__ring--dl {
+  width: 190px;
+  height: 190px;
+  border-color: rgba(var(--accent-rgb), 0.85);
+  background: rgba(var(--accent-rgb), 0.16);
+  box-shadow: 0 0 36px rgba(var(--accent-rgb), 0.22);
+}
+
+.ail__ring--ml span,
+.ail__ring--dl span {
+  color: var(--text);
+}
+
+.ail__ring--dl span {
+  margin-top: 12px;
+  color: var(--accent);
+}
+
+/* the small pulsing layers of dots inside the deep-learning circle */
+.ail__mini {
+  margin-top: 6px;
+}
+
+.ail__mini line {
+  stroke: rgba(var(--accent-rgb), 0.45);
+  stroke-width: 1;
+}
+
+.ail__mini circle {
+  fill: var(--bg-1);
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  animation: ail-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes ail-pulse {
+  0%,
+  100% {
+    fill: var(--bg-1);
+  }
+  50% {
+    fill: rgba(var(--accent-rgb), 0.7);
+  }
+}
+
+/* ---- the three explanations ---- */
+.ail__rows {
+  position: absolute;
+  left: 640px;
+  top: 184px;
+  width: 678px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ail__row {
+  padding: 12px 24px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(19, 26, 22, 0.8);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out), border-color 500ms;
+}
+
+.ail__row.is-on {
+  opacity: 0.6;
+  transform: none;
+}
+
+.ail__row.is-current {
+  opacity: 1;
+  border-color: rgba(var(--accent-rgb), 0.55);
+}
+
+.ail__row h3 {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.ail__row p {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.ail__row ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ail__row li {
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ail__headline {
+    animation: none;
+  }
+  .ail__ring,
+  .ail__row {
+    transition: none;
+  }
+  .ail__mini circle {
+    animation: none;
+  }
+}

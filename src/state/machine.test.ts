@@ -11,7 +11,7 @@ const toChoose = () => run([{ type: 'START' }, ...INTRO])
 const TO_WHY: Action[] = [{ type: 'TRAIN' }, { type: 'ANIM_DONE', stage: 'training' }, { type: 'ANIM_DONE', stage: 'test' }]
 
 describe('flow (one pick, then the what-if)', () => {
-  it('walks the whole flow: attract -> whatIsAi -> rules -> learner -> choose -> training -> test -> why -> whatIf -> everywhere -> payoff, and back', () => {
+  it('walks the whole flow: attract -> aiLayers -> quantumBit -> quantumRun -> quantumMeets -> bridge -> rules -> learner -> choose -> training -> test -> why -> whatIf -> everywhere -> payoff, and back', () => {
     const seen: string[] = [initialState.screen]
     let s: State = initialState
     const step = (a: Action[]) => {
@@ -19,16 +19,14 @@ describe('flow (one pick, then the what-if)', () => {
       seen.push(s.screen)
     }
     step([{ type: 'START' }])
-    step([{ type: 'ADVANCE' }])
-    step([{ type: 'ADVANCE' }])
-    step([{ type: 'ADVANCE' }])
+    for (let i = 0; i < ADVANCES_TO_CHOOSE; i++) step([{ type: 'ADVANCE' }])
     step([...pick(worstAchievableSet()), { type: 'TRAIN' }])
     step([{ type: 'ANIM_DONE', stage: 'training' }])
     step([{ type: 'ANIM_DONE', stage: 'test' }])
     step([{ type: 'ADVANCE' }])
     step([{ type: 'ADVANCE' }])
     step([{ type: 'ADVANCE' }])
-    expect(seen).toEqual(['attract', 'whatIsAi', 'rules', 'learner', 'choose', 'training', 'test', 'why', 'whatIf', 'everywhere', 'payoff'])
+    expect(seen).toEqual(['attract', 'aiLayers', 'quantumBit', 'quantumRun', 'quantumMeets', 'bridge', 'rules', 'learner', 'choose', 'training', 'test', 'why', 'whatIf', 'everywhere', 'payoff'])
     s = run([{ type: 'RESTART' }], s)
     expect(s).toEqual(initialState)
   })
@@ -55,9 +53,33 @@ describe('flow (one pick, then the what-if)', () => {
     expect(struggled(good)).toBe(false)
   })
 
+  it('SKIP_INTRO goes from the title straight to rules, and nowhere else', () => {
+    const s = reducer(initialState, { type: 'SKIP_INTRO' })
+    expect(s.screen).toBe('rules')
+    expect(s.selection).toEqual([])
+    // from rules the flow continues as normal: rules -> learner -> choose
+    expect(run([{ type: 'ADVANCE' }, { type: 'ADVANCE' }], s).screen).toBe('choose')
+    // only the title has the link
+    const mid = run([{ type: 'START' }])
+    expect(reducer(mid, { type: 'SKIP_INTRO' })).toBe(mid)
+    expect(reducer(toChoose(), { type: 'SKIP_INTRO' }).screen).toBe('choose')
+  })
+
+  it('the intro screens only move forward, one step at a time', () => {
+    let s = run([{ type: 'START' }])
+    for (const next of ['quantumBit', 'quantumRun', 'quantumMeets', 'bridge', 'rules', 'learner', 'choose']) {
+      s = run([{ type: 'ADVANCE' }], s)
+      expect(s.screen).toBe(next)
+    }
+    // TRAIN / picks do nothing before choose
+    const intro = run([{ type: 'START' }, { type: 'ADVANCE' }])
+    expect(reducer(intro, { type: 'TRAIN' })).toBe(intro)
+    expect(reducer(intro, { type: 'TOGGLE_CARD', id: 'train-01' })).toBe(intro)
+  })
+
   it('maps screens to step dots', () => {
     expect(stepIndex('attract')).toBe(-1)
-    for (const s of ['whatIsAi', 'rules', 'learner'] as const) expect(stepIndex(s)).toBe(0) // Learn
+    for (const s of ['aiLayers', 'quantumBit', 'quantumRun', 'quantumMeets', 'bridge', 'rules', 'learner'] as const) expect(stepIndex(s)).toBe(0) // Learn
     expect(stepIndex('choose')).toBe(1)
     expect(stepIndex('training')).toBe(2)
     expect(stepIndex('test')).toBe(3)
@@ -65,9 +87,10 @@ describe('flow (one pick, then the what-if)', () => {
   })
 
   it('takes exactly ADVANCES_TO_CHOOSE advances to get from the first screen to choose, and choose is the only screen that waits', () => {
-    expect(run([{ type: 'START' }]).screen).toBe('whatIsAi')
+    expect(run([{ type: 'START' }]).screen).toBe('aiLayers')
     expect(toChoose().screen).toBe('choose')
     expect(run([{ type: 'START' }, ...INTRO.slice(1)]).screen).toBe('learner')
+    expect(ADVANCES_TO_CHOOSE).toBe(7)
   })
 })
 

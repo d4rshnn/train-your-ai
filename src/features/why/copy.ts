@@ -21,6 +21,6 @@ export const guessWord = (r: SimResult) => ({ cat: 'cat', dog: 'dog', other: 'so
 /** One plain line over the memory map, describing where the new cat landed (the same result as the numbers). */
 export const mapCaption = (variant: WhyVariant) => (variant === 'good' ? 'The new cat landed inside the cats it knew.' : 'The new cat landed outside the cats it knew.')
 
-/** Seconds before the Why screen moves on by itself. */
-export const WHY_AUTO_MS = 8000
+/** When the Why screen has finished playing (the new cat has landed) and shows its prompt. */
+export const WHY_READY_MS = 4300
 export const WHY_SKIP_AFTER_MS = 1500

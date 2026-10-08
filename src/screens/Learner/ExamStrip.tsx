@@ -30,9 +30,9 @@ function Question({ x, at }: { x: number; at: number }) {
  * The exam analogy as a short drawing: a student at a desk practises one type of question (all the same shape), then a
  * differently shaped question arrives and a question mark pops up. Plain line art in the existing tokens; no photos.
  */
-export function ExamStrip() {
+export function ExamStrip({ finished = false }: { finished?: boolean }) {
   return (
-    <div className="exam">
+    <div className={`exam ${finished ? 'is-final' : ''}`}>
       <svg className="exam__svg" viewBox="0 0 1000 330" aria-hidden="true">
         {/* desk and chair */}
         <path className="exam__desk" d="M220 262H990M240 262V326M960 262V326" />

@@ -180,6 +180,12 @@
   animation: exam-in 600ms 4.4s var(--ease-out) both;
 }
 
+/* a click while it plays jumps to the finished picture */
+.exam.is-final *,
+.exam.is-final {
+  animation: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .exam__desk,
   .exam__student,

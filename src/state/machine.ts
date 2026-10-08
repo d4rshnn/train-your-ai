@@ -3,12 +3,17 @@ import { buildAlternate, type Alternate } from '../features/sim/alternate'
 import { simulate } from '../features/sim/predict'
 
 /**
- * Plan v2 flow: attract -> whatIsAi -> rules -> learner -> choose -> training -> test -> why -> whatIf -> everywhere -> payoff.
- * Choose is the only screen that needs the visitor; every other screen moves on by itself (ADVANCE) or on a tap.
+ * Plan v2.1 flow: attract -> aiLayers -> quantumBit -> quantumRun -> quantumMeets -> bridge -> rules -> learner -> choose ->
+ * training -> test -> why -> whatIf -> everywhere -> payoff. SKIP_INTRO goes from attract straight to rules.
+ * Choose is the only screen that needs a decision; every other screen moves on with ADVANCE (the "Click for next" prompt).
  */
 export type Screen =
   | 'attract'
-  | 'whatIsAi'
+  | 'aiLayers'
+  | 'quantumBit'
+  | 'quantumRun'
+  | 'quantumMeets'
+  | 'bridge'
   | 'rules'
   | 'learner'
   | 'choose'
@@ -19,8 +24,8 @@ export type Screen =
   | 'everywhere'
   | 'payoff'
 
-/** How many ADVANCEs take the flow from the first screen after START (whatIsAi) to choose. */
-export const ADVANCES_TO_CHOOSE = 3
+/** How many ADVANCEs take the flow from the first screen after START (aiLayers) to choose. */
+export const ADVANCES_TO_CHOOSE = 7
 export const TRAY_SIZE = 10
 
 export type State = {
@@ -37,6 +42,7 @@ export type State = {
 
 export type Action =
   | { type: 'START' }
+  | { type: 'SKIP_INTRO' }
   | { type: 'ADVANCE' }
   | { type: 'TOGGLE_CARD'; id: string }
   | { type: 'CLEAR' }
@@ -63,10 +69,17 @@ const fresh = (): State => ({ ...initialState, selection: [], results: { yours: 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'START':
-      return state.screen === 'attract' ? { ...state, screen: 'whatIsAi' } : state
+      return state.screen === 'attract' ? { ...state, screen: 'aiLayers' } : state
+
+    case 'SKIP_INTRO':
+      return state.screen === 'attract' ? { ...state, screen: 'rules' } : state
 
     case 'ADVANCE':
-      if (state.screen === 'whatIsAi') return { ...state, screen: 'rules' }
+      if (state.screen === 'aiLayers') return { ...state, screen: 'quantumBit' }
+      if (state.screen === 'quantumBit') return { ...state, screen: 'quantumRun' }
+      if (state.screen === 'quantumRun') return { ...state, screen: 'quantumMeets' }
+      if (state.screen === 'quantumMeets') return { ...state, screen: 'bridge' }
+      if (state.screen === 'bridge') return { ...state, screen: 'rules' }
       if (state.screen === 'rules') return { ...state, screen: 'learner' }
       if (state.screen === 'learner') return { ...state, screen: 'choose' }
       if (state.screen === 'why') return { ...state, screen: 'whatIf' }

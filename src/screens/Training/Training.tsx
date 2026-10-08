@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { getTrayRects } from '../../features/cards/trayHandoff'
 import { imageUrl } from '../../features/cards/images'
+import { NextPrompt } from '../../components/NextPrompt'
 import { MemoryMap } from '../../features/map/MemoryMap'
 import type { NetworkEngine } from '../../features/network/engine'
 import { CAPTION_1, CAPTION_2, FEED_SIZE, feedX, feedY, startTrainingSequence, type Sequence } from '../../features/network/trainingSequence'
@@ -28,14 +29,17 @@ type Props = {
   engineRef: MutableRefObject<NetworkEngine | null>
   /** Cards fly in from the Choose tray. The what-if replay has no tray to fly from. */
   fromTray?: boolean
+  /** The visitor's own run waits for a click on "Click for next" once trained. The condensed what-if replay moves on by itself. */
+  holdForNext?: boolean
 }
 
-export function Training({ selection, speed = 1, onDone, engineRef, fromTray = true }: Props) {
+export function Training({ selection, speed = 1, onDone, engineRef, fromTray = true, holdForNext = true }: Props) {
   const holdMs = speed > 1 ? CONDENSED_HOLD_MS : HOLD_MS
   const [caption, setCaption] = useState<1 | 2>(1)
   const [chip, setChip] = useState(false)
   const [stamp, setStamp] = useState(false)
   const [skipReady, setSkipReady] = useState(false)
+  const [settled, setSettled] = useState(false)
   const feedRefs = useRef<(HTMLElement | null)[]>([])
   const docksRef = useRef<HTMLDivElement>(null)
   const pctRef = useRef<HTMLSpanElement>(null)
@@ -76,6 +80,7 @@ export function Training({ selection, speed = 1, onDone, engineRef, fromTray = t
         },
         setStamp,
         onSettled: () => {
+          if (holdForNext) return setSettled(true)
           window.clearTimeout(advanceTimer.current)
           advanceTimer.current = window.setTimeout(advance, (seq.current?.skipped ?? true) ? HOLD_AFTER_SKIP_MS : holdMs)
         },
@@ -94,7 +99,7 @@ export function Training({ selection, speed = 1, onDone, engineRef, fromTray = t
   }, [])
 
   const onTap = () => {
-    if (stamp) return advance()
+    if (stamp) return holdForNext ? undefined : advance()
     if (skipReady && seq.current && !seq.current.skipped) seq.current.skip()
   }
 
@@ -139,6 +144,7 @@ export function Training({ selection, speed = 1, onDone, engineRef, fromTray = t
         </div>
         {skipReady && !stamp ? <p className="training__hint">Tap to skip</p> : null}
       </div>
+      {holdForNext ? <NextPrompt ready={settled} onNext={advance} /> : null}
     </section>
   )
 }

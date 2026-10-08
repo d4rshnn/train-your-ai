@@ -25,6 +25,8 @@ type Props = {
   labels?: boolean
   /** A "New cat" label by the new dot (only worth it on the large map). */
   newLabel?: boolean
+  /** Jump to the finished picture: islands full size, the new cat landed, nothing still moving. */
+  finished?: boolean
 }
 
 const pct = (v: number, of: number) => `${(v / of) * 100}%`
@@ -33,7 +35,7 @@ const pct = (v: number, of: number) => `${(v / of) * 100}%`
  * The memory map: every example the AI saw is a dot, similar ones sit close together, and the new picture lands where the
  * AI thinks it belongs. A simplified, deterministic picture of the simulation's own numbers (see sim/mapLayout.ts).
  */
-export function MemoryMap({ ids, test = null, testDelay = 0, stagger = 0, growAfter, className = '', tag = true, labels = true, newLabel = false }: Props) {
+export function MemoryMap({ ids, test = null, testDelay = 0, stagger = 0, growAfter, className = '', tag = true, labels = true, newLabel = false, finished = false }: Props) {
   const layout = useMemo(() => layoutMap(ids, test), [ids, test])
   // the island starts small and grows once the dots are in (unless it is following a live pick)
   const [grown, setGrown] = useState(growAfter === undefined)
@@ -43,14 +45,14 @@ export function MemoryMap({ ids, test = null, testDelay = 0, stagger = 0, growAf
     return () => window.clearTimeout(t)
   }, [growAfter])
 
-  const catR = grown ? layout.catR : CAT_R_MIN
+  const catR = grown || finished ? layout.catR : CAT_R_MIN
   const t = layout.test
   const arrive = testDelay + FLIGHT_S
   const nearestIsCat = t?.nearest === 'cat'
   const nearest = nearestIsCat ? { ...CAT_CENTRE, r: catR } : { ...OTHER_CENTRE, r: layout.otherR }
 
   return (
-    <div className={`map ${className}`} role="img" aria-label="Simplified map of the examples the AI has seen">
+    <div className={`map ${finished ? 'is-final' : ''} ${className}`} role="img" aria-label="Simplified map of the examples the AI has seen">
       <svg viewBox={`0 0 ${MAP_W} ${MAP_H}`} aria-hidden="true">
         <defs>
           <radialGradient id="map-island">

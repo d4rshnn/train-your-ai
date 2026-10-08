@@ -1,0 +1,66 @@
+/* "Click for next": large, bottom centre, soft pulse. Appears when the screen has finished playing. */
+.next-prompt {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: 60px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 0 40px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(var(--accent-rgb), 0.75);
+  background: rgba(var(--accent-rgb), 0.14);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  animation: next-in 300ms var(--ease-out) both, next-pulse 2s 300ms ease-in-out infinite;
+}
+
+.next-prompt:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.next-prompt svg {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.next-prompt:active:not(:disabled) {
+  background: rgba(var(--accent-rgb), 0.3);
+}
+
+@keyframes next-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+@keyframes next-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.35), 0 0 22px rgba(var(--accent-rgb), 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(var(--accent-rgb), 0), 0 0 30px rgba(var(--accent-rgb), 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .next-prompt {
+    animation: none;
+  }
+}

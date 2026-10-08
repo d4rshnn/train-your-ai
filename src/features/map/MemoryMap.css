@@ -247,6 +247,27 @@
   background: rgba(7, 9, 10, 0.6);
 }
 
+/* skipped: show the finished picture at once */
+.map.is-final * {
+  animation: none !important;
+  transition: none !important;
+}
+
+.map.is-final .map__link {
+  opacity: 1;
+  stroke-dashoffset: 0;
+}
+
+.map.is-final .map__new,
+.map.is-final .map__ring {
+  opacity: 1;
+}
+
+.map.is-final .map__trail,
+.map.is-final .map__pulse {
+  opacity: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .map__dot,
   .map__island {

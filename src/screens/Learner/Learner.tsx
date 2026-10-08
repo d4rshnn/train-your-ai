@@ -5,6 +5,7 @@ import { cellDelay, cellNumber, cellsFromImageData, FACE_CROP, GRID, HIGHLIGHTS,
 import type { NetworkEngine } from '../../features/network/engine'
 import { drive, Timeline } from '../../features/network/timeline'
 import type { Action } from '../../state/machine'
+import { NextPrompt } from '../../components/NextPrompt'
 import { SKIP_AFTER_MS } from '../useScreenClock'
 import { ExamStrip } from './ExamStrip'
 import './Learner.css'
@@ -12,9 +13,11 @@ import './Learner.css'
 /** The cat used for the explainer: a clear, front-facing training card. */
 const CAT = TRAINING_EXAMPLES[0]
 
-/** The first three steps advance on a tap or after 2.4 s; then the exam-practice strip plays (EXAM_MS) and the screen moves on: 13.6 s in all. */
-export const STEP_MS = 2400
-export const EXAM_MS = 6400
+/**
+ * Each of the four steps (cat, numbers, patterns, exam strip) plays, then waits for a click on "Click for next". These are
+ * how long each takes to finish playing (ms), i.e. when the prompt appears; none runs past the 14 s ceiling.
+ */
+export const STEP_READY_MS = [1100, 1800, 2600, 5400] as const
 export const CAPTIONS = ['This is a cat. To you, obviously.', 'To an AI, a picture starts as just numbers.', 'It has to find patterns.'] as const
 export const EXAM_HEADLINE = 'Think of practising for an exam.'
 
@@ -39,14 +42,14 @@ type Props = {
 export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
   const [step, setStep] = useState(0)
   const [ready, setReady] = useState(false)
-  const [lastReady, setLastReady] = useState(false)
+  const [stepDone, setStepDone] = useState(false)
+  const [skipOk, setSkipOk] = useState(false)
+  const [examFinal, setExamFinal] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const cells = useRef<Cell[]>([])
   const accent = useRef<[number, number, number]>([47, 227, 122])
   const dissolved = useRef(0)
-
-  const next = useCallback(() => setStep((s) => Math.min(3, s + 1)), [])
 
   // Sample the real image into 24 x 24 cells with a canvas (local file, no network).
   useEffect(() => {
@@ -147,26 +150,44 @@ export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
     return () => onNetworkHidden(false)
   }, [step, onNetworkHidden])
 
-  // auto-advance: through the four captions, then on to Choose by itself (a tap moves on too, once the last line has had 1.5 s)
+  // each step plays, then waits for a click on the prompt (a click while it still plays, after 1.5 s, jumps to its finished state)
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const ready = window.setTimeout(() => setStepDone(true), reduced ? 0 : STEP_READY_MS[step])
+    const skip = window.setTimeout(() => setSkipOk(true), SKIP_AFTER_MS)
+    return () => {
+      window.clearTimeout(ready)
+      window.clearTimeout(skip)
+    }
+  }, [step])
+
   const moved = useRef(false)
-  const leave = useCallback(() => {
+  const onNext = () => {
+    if (step < 3) {
+      setStep(step + 1)
+      setStepDone(false)
+      setSkipOk(false)
+      return
+    }
     if (moved.current) return
     moved.current = true
     dispatch({ type: 'ADVANCE' })
-  }, [dispatch])
-  useEffect(() => {
-    const t = window.setTimeout(step >= 3 ? leave : next, step >= 3 ? EXAM_MS : STEP_MS)
-    const r = step >= 3 ? window.setTimeout(() => setLastReady(true), SKIP_AFTER_MS) : undefined
-    return () => {
-      window.clearTimeout(t)
-      window.clearTimeout(r)
+  }
+
+  const onTap = () => {
+    if (stepDone || !skipOk) return
+    if (step === 1) {
+      paint(1)
+      if (imgRef.current) imgRef.current.style.opacity = '0'
     }
-  }, [step, next, leave])
+    if (step === 3) setExamFinal(true)
+    setStepDone(true)
+  }
 
   const pos = step >= 2 ? `translate(${SMALL.x}px, ${SMALL.y}px) scale(${SMALL.size / BIG.size})` : `translate(${BIG.x}px, ${BIG.y}px)`
 
   return (
-    <section className="wak" onPointerDown={step < 3 ? next : lastReady ? leave : undefined}>
+    <section className="wak" onPointerDown={onTap}>
       <h2 className="wak__headline" key={step >= 3 ? 'exam' : 'cat'}>{step >= 3 ? EXAM_HEADLINE : 'An AI doesn’t know what a cat is.'}</h2>
 
       <div className={`wak__card ${step >= 3 ? 'is-gone' : ''}`} style={{ transform: pos, width: BIG.size, height: BIG.size }}>
@@ -211,10 +232,10 @@ export function Learner({ dispatch, engineRef, onNetworkHidden }: Props) {
           {CAPTIONS[step]}
         </p>
       ) : (
-        <ExamStrip />
+        <ExamStrip finished={examFinal} />
       )}
 
-      <p className="wak__hint">Tap for next</p>
+      <NextPrompt ready={stepDone} onNext={onNext} />
     </section>
   )
 }

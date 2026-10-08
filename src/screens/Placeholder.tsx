@@ -4,7 +4,11 @@ import './Placeholder.css'
 
 const TITLES: Record<Screen, string> = {
   attract: 'Attract',
-  whatIsAi: 'What is AI?',
+  aiLayers: 'AI layers',
+  quantumBit: 'A qubit',
+  quantumRun: 'Run it 100 times',
+  quantumMeets: 'Quantum + ML',
+  bridge: 'Bridge',
   rules: 'Rules',
   learner: 'Meet the learner',
   choose: 'Choose examples',

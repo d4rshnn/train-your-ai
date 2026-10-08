@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Button } from '../../components/Button'
 import './Attract.css'
 
-export function Attract({ onStart }: { onStart: () => void }) {
+export function Attract({ onStart, onSkipIntro }: { onStart: () => void; onSkipIntro: () => void }) {
   // Space / Enter also start (the button handles Enter/Space itself when focused).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -28,6 +28,9 @@ export function Attract({ onStart }: { onStart: () => void }) {
         <Button className="btn--pulse attract__start" onClick={onStart} autoFocus>
           Start
         </Button>
+        <button type="button" className="attract__skip" onClick={onSkipIntro}>
+          Skip intro
+        </button>
       </div>
     </section>
   )

@@ -1,0 +1,50 @@
+.bridge {
+  position: absolute;
+  inset: 0;
+}
+
+.bridge__lead,
+.bridge__example {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  margin: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+
+.bridge__lead.is-on,
+.bridge__example.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.bridge__lead {
+  top: 230px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 68px;
+  line-height: 1.1;
+}
+
+.bridge__example {
+  top: 400px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-size: 44px;
+  color: var(--text-dim);
+}
+
+.bridge__cat {
+  color: var(--accent);
+  display: inline-flex;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bridge__lead,
+  .bridge__example {
+    transition: none;
+  }
+}

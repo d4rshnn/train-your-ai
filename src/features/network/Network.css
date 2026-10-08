@@ -52,7 +52,7 @@
 .net figcaption {
   position: absolute;
   right: 0;
-  bottom: 0;
+  bottom: 56px; /* clear of the "Click for next" pill at the bottom centre */
   font-family: var(--font-mono);
   font-size: 14px;
   letter-spacing: 0.14em;

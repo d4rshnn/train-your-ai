@@ -7,8 +7,10 @@ import './DevPanel.css'
 type Props = { dispatch: Dispatch<Action>; engineRef: MutableRefObject<NetworkEngine | null>; screen: Screen }
 
 const WORST = worstAchievableSet()
-const TARGETS = ['What is AI', 'Rules', 'Learner', 'Training', 'Test', 'Why', 'What if', 'Everywhere', 'Payoff'] as const
+const TARGETS = ['AI layers', 'Qubit', 'Run 100', 'Quantum + ML', 'Bridge', 'Rules', 'Learner', 'Training', 'Test', 'Why', 'What if', 'Everywhere', 'Payoff'] as const
 type Target = (typeof TARGETS)[number]
+/** AI layers, Qubit, Run 100, Quantum + ML, Bridge, Rules, Learner: each is that many ADVANCEs after START. */
+const INTRO_TARGETS = ADVANCES_TO_CHOOSE
 
 /** Dev-only (?dev): pick a preset and either watch it play from Training or jump straight to a later screen. */
 export default function DevPanel({ dispatch, engineRef, screen }: Props) {
@@ -38,7 +40,7 @@ export default function DevPanel({ dispatch, engineRef, screen }: Props) {
   const jump = () => {
     // the three intro screens come before any pick, so these targets only walk forward from the start
     const intro = TARGETS.indexOf(target)
-    if (intro < 3) {
+    if (intro < INTRO_TARGETS) {
       dispatch({ type: 'RESTART' })
       dispatch({ type: 'START' })
       for (let i = 0; i < intro; i++) dispatch({ type: 'ADVANCE' })

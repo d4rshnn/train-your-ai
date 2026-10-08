@@ -27,8 +27,4 @@ export function compareLine(trend: Trend, direction: Alternate['direction']): st
 export const arrowLabel = (trend: Trend, diff: number) =>
   trend === 'up' ? `${diff} more right` : trend === 'down' ? `${diff} fewer right` : 'no change'
 
-/** Seconds the finished comparison stays up before moving on by itself. */
-export const WHATIF_HOLD_MS = 9000
 export const WHATIF_SKIP_AFTER_MS = 1500
-/** After a skip or with reduced motion: how long the finished comparison stays before moving on by itself. */
-export const WHATIF_AFTER_SKIP_MS = 6000

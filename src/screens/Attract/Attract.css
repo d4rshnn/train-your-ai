@@ -60,3 +60,25 @@
     animation: none;
   }
 }
+
+/* small text link under START: straight to the cat demo */
+.attract__skip {
+  display: block;
+  margin: 22px 0 0 8px;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  cursor: pointer;
+}
+
+.attract__skip:hover,
+.attract__skip:focus-visible {
+  color: var(--text);
+}

@@ -116,6 +116,7 @@
 /* text on the left, the big memory map on the right */
 .why__body {
   display: flex;
+  justify-content: space-between;
   gap: 28px;
   margin-top: 14px;
 }
@@ -129,7 +130,7 @@
 
 .why__map {
   flex: none;
-  width: 688px;
+  width: 580px;
 }
 
 .why__sub {
@@ -155,52 +156,3 @@
   color: var(--text);
 }
 
-/* ---- continue row: a slim bar shows that the screen moves on by itself ---- */
-.why__continue {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.why__auto {
-  width: 200px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--line);
-  overflow: hidden;
-}
-
-.why__auto i {
-  display: block;
-  height: 100%;
-  background: var(--accent-deep);
-  transform-origin: left center;
-  animation: why-auto linear forwards;
-}
-
-@keyframes why-auto {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-.why__hint {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 15px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .why__auto i {
-    animation: none;
-    transform: scaleX(1);
-  }
-}

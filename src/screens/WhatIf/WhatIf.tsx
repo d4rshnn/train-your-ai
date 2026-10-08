@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
-import { Button } from '../../components/Button'
+import { NextPrompt } from '../../components/NextPrompt'
 import { MemoryMap } from '../../features/map/MemoryMap'
 import type { NetworkEngine } from '../../features/network/engine'
 import { displayPercents, OUTPUTS } from '../../features/network/inference'
 import { drive, Timeline } from '../../features/network/timeline'
 import type { Alternate } from '../../features/sim/alternate'
 import type { SimResult } from '../../features/sim/types'
-import { arrowLabel, compareLine, introLine, titles, trendOf, WHATIF_HEADLINE, WHATIF_AFTER_SKIP_MS, WHATIF_HOLD_MS, WHATIF_SKIP_AFTER_MS, type Trend } from '../../features/whatif/copy'
+import { arrowLabel, compareLine, introLine, titles, trendOf, WHATIF_HEADLINE, WHATIF_SKIP_AFTER_MS, type Trend } from '../../features/whatif/copy'
 import { Test } from '../Test/Test'
 import { CONDENSED_SPEED, Training } from '../Training/Training'
 import './WhatIf.css'
@@ -59,9 +59,9 @@ export function WhatIf({ selection, yours, alternate, other, engineRef, onNetwor
             {introLine(alternate.direction)}
           </p>
           {phase === 'train' ? (
-            <Training key="t" selection={alternate.ids} speed={CONDENSED_SPEED} fromTray={false} engineRef={engineRef} onDone={() => setPhase('test')} />
+            <Training key="t" selection={alternate.ids} speed={CONDENSED_SPEED} fromTray={false} holdForNext={false} engineRef={engineRef} onDone={() => setPhase('test')} />
           ) : (
-            <Test key="s" selection={alternate.ids} result={other} speed={CONDENSED_SPEED} engineRef={engineRef} onDone={() => setPhase('compare')} />
+            <Test key="s" selection={alternate.ids} result={other} speed={CONDENSED_SPEED} holdForNext={false} engineRef={engineRef} onDone={() => setPhase('compare')} />
           )}
         </>
       ) : (
@@ -115,7 +115,6 @@ function Compare({ selection, yours, alternate, other, onContinue }: Pick<Props,
   const [skipReady, setSkipReady] = useState(false)
   const skipFn = useRef<(() => void) | null>(null)
   const finished = useRef(false)
-  const afterSkip = useRef<number | undefined>(undefined)
 
   const t = titles(alternate.direction)
   const trend = trendOf(yours.correctCount, other.correctCount)
@@ -141,31 +140,21 @@ function Compare({ selection, yours, alternate, other, onContinue }: Pick<Props,
         if (num) num.textContent = String(Math.round(p * v))
       })
     }
-    // yours first, then the alternate, then the arrow
+    // yours first, then the alternate, then the arrow; then the screen waits for a click on "Click for next"
     tl.tween(0.5, 1.3, (p) => paint(left, yours, ease(p)))
     tl.tween(1.9, 1.3, (p) => paint(right, other, ease(p)))
     tl.at(3.4, () => setArrowOn(true))
     tl.at(4.0, () => setDoneOn(true))
-    tl.at(4.0 + WHATIF_HOLD_MS / 1000, go)
     const stop = drive(tl)
-    const skip = () => {
-      tl.skip() // fires everything left, including the automatic move-on, so hold it back
-    }
     skipFn.current = () => {
-      finished.current = true // hold back the automatic move-on that skip() would otherwise fire right now
-      skip()
-      finished.current = false
+      tl.skip() // fires everything left: the count-ups finish, the arrow and the prompt appear
       setArrowOn(true)
       setDoneOn(true)
-      // after a skip (or with reduced motion) nothing else would move the screen on, so give it a moment, then go
-      window.clearTimeout(afterSkip.current)
-      afterSkip.current = window.setTimeout(go, WHATIF_AFTER_SKIP_MS)
     }
     if (reduced) skipFn.current()
     const s = window.setTimeout(() => setSkipReady(true), WHATIF_SKIP_AFTER_MS)
     return () => {
       window.clearTimeout(s)
-      window.clearTimeout(afterSkip.current)
       stop()
       tl.cancel()
       skipFn.current = null
@@ -174,10 +163,10 @@ function Compare({ selection, yours, alternate, other, onContinue }: Pick<Props,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // a click while the comparison is still counting up jumps to the finished state; it never also moves on
   const onTap = () => {
-    if (!skipReady) return
-    if (doneOn) go()
-    else skipFn.current?.()
+    if (doneOn || !skipReady) return
+    skipFn.current?.()
   }
 
   return (
@@ -194,11 +183,9 @@ function Compare({ selection, yours, alternate, other, onContinue }: Pick<Props,
 
       <div className={`wi-foot ${doneOn ? 'is-on' : ''}`}>
         <span className="wi-sim">Simulated</span>
-        <Button onClick={go} disabled={!doneOn} className="whatif__continue">
-          Continue
-        </Button>
       </div>
       {skipReady && !doneOn ? <p className="wi-hint">Tap to skip</p> : null}
+      <NextPrompt ready={doneOn} onNext={go} />
     </div>
   )
 }

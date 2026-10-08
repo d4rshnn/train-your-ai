@@ -1,11 +1,12 @@
 import type { Dispatch, ReactNode } from 'react'
+import { NextPrompt } from '../../components/NextPrompt'
 import type { Action } from '../../state/machine'
 import { useScreenClock } from '../useScreenClock'
 import './Everywhere.css'
 
-/** Beats in seconds: the four icons one by one, then the closing line. The screen ends at EVERYWHERE_END_SEC. */
+/** Beats in seconds: the four icons one by one, then the closing line. The animation is finished at EVERYWHERE_READY_SEC. */
 const PHASE_AT = [0.5, 1.5, 2.5, 3.5, 4.8] as const
-export const EVERYWHERE_END_SEC = 8
+export const EVERYWHERE_READY_SEC = 5.6
 
 export const EVERYWHERE_COPY = {
   headline: "It's everywhere.",
@@ -51,9 +52,9 @@ const ITEMS: { label: string; line: string; icon: ReactNode }[] = [
   { label: 'Self-driving', line: 'Cars learn to drive.', icon: <Car /> },
 ]
 
-/** "It's everywhere". Four simple icons appear one by one, then the closing line. About 8 s; a tap skips after 1.5 s. */
+/** "It's everywhere". Four simple icons appear one by one, then the closing line. Click for next once it has played; a click after 1.5 s skips to the finished state. */
 export function Everywhere({ dispatch }: { dispatch: Dispatch<Action> }) {
-  const { phase, skipReady, onTap } = useScreenClock(PHASE_AT, EVERYWHERE_END_SEC, () => dispatch({ type: 'ADVANCE' }))
+  const { phase, ready, onTap, next } = useScreenClock(PHASE_AT, EVERYWHERE_READY_SEC, () => dispatch({ type: 'ADVANCE' }))
 
   return (
     <section className="every" onPointerDown={onTap}>
@@ -75,7 +76,7 @@ export function Everywhere({ dispatch }: { dispatch: Dispatch<Action> }) {
 
       <p className={`every__closing ${phase >= 5 ? 'is-on' : ''}`}>{EVERYWHERE_COPY.closing}</p>
 
-      {skipReady ? <p className="every__hint">Tap to continue</p> : null}
+      <NextPrompt ready={ready} onNext={next} />
     </section>
   )
 }

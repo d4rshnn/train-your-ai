@@ -1,0 +1,261 @@
+.qbit {
+  position: absolute;
+  inset: 0;
+}
+
+.qbit__headline {
+  position: absolute;
+  left: var(--safe);
+  top: 92px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-headline);
+  line-height: 1.1;
+  animation: qbit-in 500ms var(--ease-out) both;
+}
+
+@keyframes qbit-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.qbit__panel {
+  position: absolute;
+  top: 190px;
+  width: 560px;
+  height: 340px;
+  padding: 20px 28px;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(19, 26, 22, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: qbit-in 600ms 150ms var(--ease-out) both;
+}
+
+.qbit__panel--bit {
+  left: var(--safe);
+}
+
+.qbit__panel--qubit {
+  left: 758px;
+  border-color: rgba(var(--accent-rgb), 0.45);
+  box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.1);
+}
+
+.qbit__label {
+  align-self: flex-start;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.qbit__panel--qubit .qbit__label {
+  color: var(--accent);
+}
+
+/* ---- the normal bit: a switch that is 0 or 1 ---- */
+.qbit__switch {
+  position: relative;
+  margin-top: 34px;
+  width: 190px;
+  height: 92px;
+  border-radius: 46px;
+  border: 1.5px solid var(--text-dim);
+  background: var(--bg-1);
+  cursor: pointer;
+  transition: background 250ms, border-color 250ms;
+}
+
+.qbit__switch.is-1 {
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.18);
+}
+
+.qbit__knob {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: transform 250ms var(--ease-out), background 250ms;
+}
+
+.qbit__switch.is-1 .qbit__knob {
+  transform: translateX(98px);
+  background: var(--accent);
+  box-shadow: 0 0 18px var(--accent-glow);
+}
+
+.qbit__digit {
+  margin: 14px 0 0;
+  font-family: var(--font-mono);
+  font-size: 84px;
+  line-height: 1;
+}
+
+.qbit__sub {
+  margin: 8px 0 0;
+  font-size: 22px;
+  color: var(--text-dim);
+}
+
+/* ---- the qubit coin ---- */
+.qbit__stage {
+  width: 100%;
+  height: 170px;
+  margin-top: 6px;
+  display: grid;
+  place-items: center;
+  perspective: 700px;
+}
+
+.qbit__hop.is-hop {
+  animation: qbit-hop 1400ms ease-out both;
+}
+
+@keyframes qbit-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-34px);
+  }
+}
+
+.qbit__coin {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  transform-style: preserve-3d;
+}
+
+.qbit__coin.is-spinning {
+  animation: qbit-spin 2400ms linear infinite;
+}
+
+.qbit__coin.is-landing.is-heads {
+  animation: qbit-land-heads 1400ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.qbit__coin.is-landing.is-tails {
+  animation: qbit-land-tails 1400ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes qbit-spin {
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes qbit-land-heads {
+  to {
+    transform: rotateY(1440deg);
+  }
+}
+
+@keyframes qbit-land-tails {
+  to {
+    transform: rotateY(1620deg);
+  }
+}
+
+.qbit__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  background: radial-gradient(circle at 35% 30%, rgba(var(--accent-rgb), 0.38), rgba(var(--accent-rgb), 0.12));
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 56px;
+  backface-visibility: hidden;
+  box-shadow: 0 0 28px rgba(var(--accent-rgb), 0.25);
+}
+
+.qbit__face--tails {
+  transform: rotateY(180deg);
+  border-color: var(--warn);
+  background: radial-gradient(circle at 35% 30%, rgba(227, 179, 65, 0.35), rgba(227, 179, 65, 0.1));
+  box-shadow: 0 0 28px rgba(227, 179, 65, 0.2);
+}
+
+.qbit__result {
+  margin: 10px 0 0;
+  height: 28px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.qbit__measure {
+  margin-top: 12px;
+}
+
+.qbit__caption {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  top: 560px;
+  margin: 0;
+  text-align: center;
+  font-size: 28px;
+  line-height: 1.25;
+  animation: qbit-in 600ms 400ms var(--ease-out) both;
+}
+
+.qbit__tag {
+  position: absolute;
+  left: var(--safe);
+  bottom: 70px;
+  margin: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qbit__headline,
+  .qbit__panel,
+  .qbit__caption {
+    animation: none;
+  }
+  .qbit__coin.is-spinning {
+    animation: none;
+  }
+  .qbit__coin.is-landing.is-heads {
+    animation: none;
+    transform: none;
+  }
+  .qbit__coin.is-landing.is-tails {
+    animation: none;
+    transform: rotateY(180deg);
+  }
+  .qbit__hop.is-hop {
+    animation: none;
+  }
+  .qbit__switch,
+  .qbit__knob {
+    transition: none;
+  }
+}

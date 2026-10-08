@@ -7,16 +7,23 @@ export function parseAutoplay(search: string): { enabled: boolean; once: boolean
 }
 
 /**
- * Pauses (ms) between the scripted actions. The screens keep their own animations and auto-advance timers (the intro
- * screens, training, test, why, the what-if replay and everywhere move on by themselves); these are only the extra dwell times a person would spend
- * reading, plus the pick pace. PLAN_V2 target: one cycle of about 2 minutes.
+ * Pauses (ms) between the scripted actions. Every non-interactive screen now waits for a click on "Click for next"; the
+ * driver clicks that very prompt after a dwell time (so nothing waits for a human). The screens keep their own animations;
+ * these are the extra times a person would spend reading before clicking, plus the pick pace.
  */
 export const TIMING = {
-  attract: 24_000, // S1 on screen before START
+  attract: 24_000, // title on screen before START
+  layers: 6_000, // aiLayers: after each reveal's prompt appears, before the click (time to read the new circle)
+  quantumRead: 3_000, // quantumBit / quantumRun: before pressing MEASURE or RUN 100 TIMES
+  quantumHold: 4_500, // quantumBit / quantumRun: after the result, before the click (time to read the result)
+  meets: 8_000, // quantumMeets: after the prompt appears, before the click
+  bridge: 3_500, // bridge: after the prompt appears, before the click
+  intro: 2_000, // rules and the four learner steps: after the prompt appears, before the click
   prePick: 5_000, // Choose: before the first card (read the screen)
   pick: 400, // between cards flying into the tray
   prePlay: 4_000, // tray full, before TRAIN
-  compareHold: 8_000, // What if: after the side-by-side has counted up, before CONTINUE
+  result: 2_500, // training stamp, test verdict, why, everywhere: after the prompt appears, before the click
+  compareHold: 5_000, // What if: after the side-by-side has counted up, before the click
   payoffHold: 5_000, // Payoff final state before looping
 } as const
 
@@ -34,6 +41,10 @@ export type AutoplayOptions = {
   /** Called when a single (?once) cycle has finished on the payoff screen. */
   onFinished?: () => void
 }
+
+/** How long a scripted step waits for a screen before giving up. Generous on purpose: a hidden or throttled window pauses the
+ * animations (and so the prompts) for a long time, and autoplay should simply wait, not quietly stop. */
+const PATIENCE_MS = 10 * 60_000
 
 class Aborted extends Error {}
 
@@ -54,7 +65,7 @@ const sleep = (ms: number, signal: AbortSignal) =>
   })
 
 /** Poll until `selector` matches an enabled element (the screens render when the state machine gets there). */
-async function waitFor(selector: string, signal: AbortSignal, timeoutMs = 60_000): Promise<HTMLElement> {
+async function waitFor(selector: string, signal: AbortSignal, timeoutMs = PATIENCE_MS): Promise<HTMLElement> {
   const start = performance.now()
   for (;;) {
     const el = document.querySelector<HTMLElement>(selector)
@@ -76,6 +87,13 @@ async function pickCard(id: string, signal: AbortSignal) {
   ;(await waitFor(`.card[data-id="${id}"]`, signal)).click()
 }
 
+/** Wait for the screen's "Click for next" prompt, dwell like a reader, then click it (the same Next a visitor uses). */
+async function clickNext(dwell: number, signal: AbortSignal, timeoutMs = PATIENCE_MS) {
+  await waitFor('.next-prompt', signal, timeoutMs)
+  await sleep(dwell, signal)
+  await press('.next-prompt', signal)
+}
+
 /** Run the scripted visitor. Resolves after a ?once cycle; otherwise loops until aborted. */
 export async function runAutoplay({ once, signal, timing = TIMING, onFinished }: AutoplayOptions): Promise<void> {
   const worst = worstAchievableSet()
@@ -87,7 +105,31 @@ export async function runAutoplay({ once, signal, timing = TIMING, onFinished }:
       await sleep(t.attract, signal)
       await press('.attract__start', signal)
 
-      // What is AI?, Rules and the learner move on by themselves (about 38 s), straight into Choose
+      // Intro chapter. AI layers: three clicks (two reveals, then on)
+      for (let i = 0; i < 3; i++) await clickNext(t.layers, signal)
+
+      // A bit and a qubit: flip the normal bit, MEASURE the coin once, then on
+      await waitFor('.qbit__switch', signal)
+      await sleep(t.quantumRead, signal)
+      await press('.qbit__switch', signal)
+      await sleep(t.quantumRead / 2, signal)
+      await press('.qbit__measure', signal)
+      await clickNext(t.quantumHold, signal)
+
+      // Run it 100 times: two runs, so the answers visibly differ, then on
+      await waitFor('.qrun__run', signal)
+      await sleep(t.quantumRead, signal)
+      await press('.qrun__run', signal)
+      await sleep(t.quantumHold, signal)
+      await press('.qrun__run', signal)
+      await clickNext(t.quantumHold, signal)
+
+      await clickNext(t.meets, signal) // quantum + ML
+      await clickNext(t.bridge, signal) // the bridge to the cat demo
+
+      // Rules, then the learner's four steps (cat, numbers, patterns, exam strip): each waits for its prompt
+      await clickNext(t.intro, signal)
+      for (let step = 0; step < 4; step++) await clickNext(t.intro, signal)
 
       // Choose: the one and only pick. The worst achievable set, so the story shows the struggle and then the what-if.
       await waitFor('.choose__grid', signal)
@@ -99,11 +141,14 @@ export async function runAutoplay({ once, signal, timing = TIMING, onFinished }:
       await sleep(t.prePlay, signal)
       await press('.choose__train', signal)
 
-      // Training, Test and Why move on by themselves; the what-if replay then shows the side-by-side and CONTINUE.
-      // After CONTINUE the "everywhere" screen moves on by itself too.
-      await waitFor('.whatif__continue', signal, 150_000)
-      await sleep(t.compareHold, signal)
-      await press('.whatif__continue', signal)
+      // Training stamp, test verdict and why each wait for a click
+      for (let i = 0; i < 3; i++) await clickNext(t.result, signal)
+
+      // The what-if replay plays by itself; after the side-by-side has counted up there is one more click
+      await clickNext(t.compareHold, signal)
+
+      // It's everywhere
+      await clickNext(t.result, signal)
 
       // Payoff: hold on the finished state
       await waitFor('.payoff__restart.is-on', signal)

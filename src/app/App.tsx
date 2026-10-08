@@ -9,17 +9,21 @@ import type { NetworkEngine } from '../features/network/engine'
 import { recordTrayRects } from '../features/cards/trayHandoff'
 import { Network } from '../features/network/Network'
 import { NET_POS, placeFor } from '../features/network/placement'
+import { AiLayers } from '../screens/AiLayers/AiLayers'
 import { Attract } from '../screens/Attract/Attract'
+import { Bridge } from '../screens/Bridge/Bridge'
 import { Choose } from '../screens/Choose/Choose'
 import { Everywhere } from '../screens/Everywhere/Everywhere'
 import { Learner } from '../screens/Learner/Learner'
 import { Payoff } from '../screens/Payoff/Payoff'
 import { Placeholder } from '../screens/Placeholder'
+import { QuantumBit } from '../screens/QuantumBit/QuantumBit'
+import { QuantumMeets } from '../screens/QuantumMeets/QuantumMeets'
+import { QuantumRun } from '../screens/QuantumRun/QuantumRun'
 import { Rules } from '../screens/Rules/Rules'
 import { Test } from '../screens/Test/Test'
 import { Training } from '../screens/Training/Training'
 import { WhatIf } from '../screens/WhatIf/WhatIf'
-import { WhatIsAi } from '../screens/WhatIsAi/WhatIsAi'
 import { Why } from '../screens/Why/Why'
 import { initialState, reducer } from '../state/machine'
 import { stepIndex } from '../state/selectors'
@@ -145,6 +149,7 @@ export function App() {
   }, [autoplayOn])
 
   const start = useCallback(() => dispatch({ type: 'START' }), [])
+  const skipIntro = useCallback(() => dispatch({ type: 'SKIP_INTRO' }), [])
   const restart = useCallback(() => dispatch({ type: 'RESTART' }), [])
 
   // A screen can ask for the network to step aside for a while (the learner screen until the mosaic streams in; the what-if side-by-side)
@@ -183,9 +188,17 @@ export function App() {
 
         <div className="screen-layer" key={screen}>
           {screen === 'attract' ? (
-            <Attract onStart={start} />
-          ) : screen === 'whatIsAi' ? (
-            <WhatIsAi dispatch={dispatch} />
+            <Attract onStart={start} onSkipIntro={skipIntro} />
+          ) : screen === 'aiLayers' ? (
+            <AiLayers dispatch={dispatch} />
+          ) : screen === 'quantumBit' ? (
+            <QuantumBit dispatch={dispatch} />
+          ) : screen === 'quantumRun' ? (
+            <QuantumRun dispatch={dispatch} />
+          ) : screen === 'quantumMeets' ? (
+            <QuantumMeets dispatch={dispatch} />
+          ) : screen === 'bridge' ? (
+            <Bridge dispatch={dispatch} />
           ) : screen === 'rules' ? (
             <Rules dispatch={dispatch} />
           ) : screen === 'learner' ? (

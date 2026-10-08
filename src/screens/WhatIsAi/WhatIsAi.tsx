@@ -1,13 +1,14 @@
 import type { CSSProperties, Dispatch } from 'react'
 import { TRAINING_EXAMPLES } from '../../data/examples'
 import { imageUrl } from '../../features/cards/images'
+import { NextPrompt } from '../../components/NextPrompt'
 import type { Action } from '../../state/machine'
 import { useScreenClock } from '../useScreenClock'
 import './WhatIsAi.css'
 
-/** Beats in seconds: the examples idea, then the COC line. The screen ends at WHAT_IS_AI_END_SEC. */
+/** Beats in seconds: the examples idea, then the COC line. The animation is finished (and the prompt appears) at WHAT_IS_AI_READY_SEC. */
 const PHASE_AT = [3.6, 7.0] as const
-export const WHAT_IS_AI_END_SEC = 11.5
+export const WHAT_IS_AI_READY_SEC = 7.8
 
 export const WHAT_IS_AI = {
   rules: 'Most software follows rules people write.',
@@ -29,9 +30,9 @@ function Writer() {
   )
 }
 
-/** "Rules" vs "learns from examples", then a line about COC. About 11 s, moves on by itself; a tap skips after 1.5 s. */
+/** "Rules" vs "learns from examples", then a line about COC. Click for next once it has played; a click after 1.5 s skips to the finished state. */
 export function WhatIsAi({ dispatch }: { dispatch: Dispatch<Action> }) {
-  const { phase, onTap } = useScreenClock(PHASE_AT, WHAT_IS_AI_END_SEC, () => dispatch({ type: 'ADVANCE' }))
+  const { phase, ready, onTap, next } = useScreenClock(PHASE_AT, WHAT_IS_AI_READY_SEC, () => dispatch({ type: 'ADVANCE' }))
 
   return (
     <section className="wia" onPointerDown={onTap}>
@@ -76,7 +77,7 @@ export function WhatIsAi({ dispatch }: { dispatch: Dispatch<Action> }) {
 
       <p className={`wia__coc ${phase >= 2 ? 'is-on' : ''}`}>{WHAT_IS_AI.coc}</p>
 
-      <p className="wia__hint">Tap for next</p>
+      <NextPrompt ready={ready} onNext={next} />
     </section>
   )
 }

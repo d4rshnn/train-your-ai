@@ -11,8 +11,8 @@ describe('autoplay', () => {
     expect(parseAutoplay('?autoplay&fast')).toEqual({ enabled: true, once: false, fast: true })
   })
 
-  it('has a single pick and no pause for the auto-advancing intro screens in the dwell table', () => {
-    expect(Object.keys(TIMING).sort()).toEqual(['attract', 'compareHold', 'payoffHold', 'pick', 'prePick', 'prePlay'])
+  it('has a single pick, and dwell times for the "Click for next" screens instead of auto-advance waits', () => {
+    expect(Object.keys(TIMING).sort()).toEqual(['attract', 'bridge', 'compareHold', 'intro', 'layers', 'meets', 'payoffHold', 'pick', 'prePick', 'prePlay', 'quantumHold', 'quantumRead', 'result'])
   })
 
   it('picks cards about 0.4 s apart and holds the payoff for about 5 s', () => {

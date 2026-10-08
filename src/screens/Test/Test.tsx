@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { TEST_EXAMPLES } from '../../data/examples'
 import { CatIcon } from '../../components/CatIcon'
+import { NextPrompt } from '../../components/NextPrompt'
 import { Card } from '../../features/cards/Card'
 import type { NetworkEngine } from '../../features/network/engine'
 import { displayPercents, OUTPUTS, planInference } from '../../features/network/inference'
@@ -24,11 +25,13 @@ type Props = {
   result: SimResult
   /** 1 for the visitor's own run; 2 for the what-if replay. */
   speed?: number
+  /** The visitor's own run waits for a click on "Click for next" after the verdict; the condensed what-if replay moves on by itself. */
+  holdForNext?: boolean
   onDone: () => void
   engineRef: MutableRefObject<NetworkEngine | null>
 }
 
-export function Test({ selection, result, speed = 1, onDone, engineRef }: Props) {
+export function Test({ selection, result, speed = 1, holdForNext = true, onDone, engineRef }: Props) {
   const prediction = result.featured
   const percents = useMemo(() => displayPercents(prediction.probs), [prediction])
   const [caption, setCaption] = useState<'new' | 'done'>('new')
@@ -36,6 +39,7 @@ export function Test({ selection, result, speed = 1, onDone, engineRef }: Props)
   const [mapOn, setMapOn] = useState(false)
   const [verdictOn, setVerdictOn] = useState(false)
   const [skipReady, setSkipReady] = useState(false)
+  const [settled, setSettled] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const fillRefs = useRef<(HTMLElement | null)[]>([])
   const numRefs = useRef<(HTMLElement | null)[]>([])
@@ -73,6 +77,7 @@ export function Test({ selection, result, speed = 1, onDone, engineRef }: Props)
           }),
         showVerdict: () => setVerdictOn(true),
         onSettled: () => {
+          if (holdForNext) return setSettled(true)
           window.clearTimeout(timer.current)
           timer.current = window.setTimeout(advance, (seq.current?.skipped ?? true) ? HOLD_AFTER_SKIP_MS : speed > 1 ? CONDENSED_HOLD_MS : HOLD_MS)
         },
@@ -91,7 +96,7 @@ export function Test({ selection, result, speed = 1, onDone, engineRef }: Props)
   }, [])
 
   const onTap = () => {
-    if (verdictOn) return advance()
+    if (verdictOn) return
     if (skipReady && seq.current && !seq.current.skipped) seq.current.skip()
   }
 
@@ -143,6 +148,7 @@ export function Test({ selection, result, speed = 1, onDone, engineRef }: Props)
         </span>
       </div>
       {skipReady && !verdictOn ? <p className="test__hint">Tap to skip</p> : null}
+      {holdForNext ? <NextPrompt ready={settled} onNext={advance} /> : null}
     </section>
   )
 }

@@ -93,8 +93,8 @@ describe('plain language before the payoff screen', () => {
       'Machines doing things that normally need human smarts.',
       'AI that learns from examples, not rules.',
       'Learning with many layers, like a brain.',
-      "A qubit isn't secretly heads or tails. Measuring gives one, with set odds.",
-      "Same setup, different answers. That's how quantum works.",
+      'Before you measure, a qubit is a mix of both. Measuring gives one answer, with set odds.',
+      'Same setup, different answers each time. Quantum results come as odds, not certainties.',
       'Quantum + ML: researchers are exploring whether quantum computers can help machines learn.',
       "It's early. Today's quantum computers are small and noisy.",
       "Let's see how a machine actually learns.",
@@ -120,6 +120,12 @@ describe('plain language before the payoff screen', () => {
       'sure it',
     ])
       expect(all, line).toContain(line)
+  })
+
+  it('drops the old quantum wording (how quantum works, secretly heads or tails)', () => {
+    const all = PRE_PAYOFF_FILES.flatMap((f) => visibleText(read(f))).join(' ')
+    expect(all).not.toMatch(/how quantum works/i)
+    expect(all).not.toMatch(/secretly heads or tails/i)
   })
 
   it('uses the exam analogy, not the white-cats kid', () => {

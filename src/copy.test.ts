@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { FOOTER_NOTE, footerNoteFor, INTRO_SCREENS } from './app/footer'
 
 const SRC = __dirname
 
@@ -59,10 +60,17 @@ describe('copy audit', () => {
     })
   }
 
+  it('shows the simulation line from the title and the rules screen onward, but not on the intro chapter', () => {
+    for (const s of INTRO_SCREENS) expect(footerNoteFor(s), s).toBeUndefined()
+    for (const s of ['attract', 'rules', 'learner', 'choose', 'training', 'test', 'why', 'whatIf', 'everywhere', 'payoff'] as const) expect(footerNoteFor(s), s).toBe(FOOTER_NOTE)
+    // the quantum screens carry their own honesty tag instead
+    expect(INTRO_SCREENS).toEqual(['aiLayers', 'quantumBit', 'quantumRun', 'quantumMeets', 'bridge'])
+  })
+
   it('keeps the honesty tags in the code that renders them', () => {
     const read = (rel: string) => readFileSync(join(SRC, rel), 'utf8')
-    expect(read('app/App.tsx')).toMatch(/Simulation: the AI here is a conceptual demo\./)
-    expect(read('app/App.tsx')).toMatch(/<Footer note=\{FOOTER_NOTE\}/) // on every screen, attract included
+    expect(read('app/footer.ts')).toMatch(/Simulation: the AI here is a conceptual demo\./)
+    expect(read('app/App.tsx')).toMatch(/<Footer note=\{footerNoteFor\(screen\)\}/)
     expect(read('features/network/Network.tsx')).toContain('Conceptual view')
     expect(read('screens/Learner/Learner.tsx')).toContain('Simplified view')
     expect(read('features/map/MemoryMap.tsx')).toContain('Simplified view')

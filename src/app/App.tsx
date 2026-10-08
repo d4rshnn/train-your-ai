@@ -28,6 +28,7 @@ import { Why } from '../screens/Why/Why'
 import { initialState, reducer } from '../state/machine'
 import { stepIndex } from '../state/selectors'
 import { parseAutoplay, scaleTiming, TIMING } from './autoplay'
+import { footerNoteFor } from './footer'
 import { IdleOverlay } from './IdleOverlay'
 import { nextIdleStep, useIdleWatcher } from './idle'
 import { Stage } from './Stage'
@@ -61,9 +62,6 @@ function stripAutoplayFromUrl() {
   u.searchParams.delete('once')
   window.history.replaceState(null, '', u)
 }
-
-/** Honesty tag shown in the footer of every screen. */
-export const FOOTER_NOTE = 'Simulation: the AI here is a conceptual demo.'
 
 /** Operator reset: press R twice within this window, anywhere. */
 const DOUBLE_R_MS = 800
@@ -184,7 +182,7 @@ export function App() {
         </div>
         <BrandMark onOperatorReset={restart} />
         <StepDots current={stepIndex(screen)} />
-        <Footer note={FOOTER_NOTE} />
+        <Footer note={footerNoteFor(screen)} />
 
         <div className="screen-layer" key={screen}>
           {screen === 'attract' ? (

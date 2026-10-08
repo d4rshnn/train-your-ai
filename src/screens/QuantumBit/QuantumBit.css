@@ -186,6 +186,14 @@
   box-shadow: 0 0 28px rgba(var(--accent-rgb), 0.25);
 }
 
+.qbit__coinicon {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .qbit__face--tails {
   transform: rotateY(180deg);
   border-color: var(--warn);

@@ -8,12 +8,25 @@ export const QBIT_COPY = {
   headline: 'A bit and a qubit',
   bitLabel: 'A normal bit: 0 or 1',
   qubitLabel: 'A qubit',
-  caption: "A qubit isn't secretly heads or tails. Measuring gives one, with set odds.",
+  caption: 'Before you measure, a qubit is a mix of both. Measuring gives one answer, with set odds.',
   odds: 'Odds: 50 / 50',
 } as const
 
 /** The flip lasts this long; the prompt appears once the first measurement has landed. */
 export const FLIP_MS = 1400
+
+/** A simple coin: an outline, an inner ring and a small spin hint (two curved arrows). Drawn, not a letter. */
+function CoinIcon() {
+  return (
+    <svg className="qbit__coinicon" viewBox="0 0 64 64" width="84" height="84" aria-hidden="true">
+      <circle cx="32" cy="32" r="19" />
+      <circle cx="32" cy="32" r="11" />
+      <path d="M32 27v10M28 32h8" />
+      <path d="M8 24a26 26 0 0 1 14-14M18 8l5 2-3 5" />
+      <path d="M56 40a26 26 0 0 1-14 14M46 56l-5-2 3-5" />
+    </svg>
+  )
+}
 
 /**
  * A normal bit (a switch: 0 or 1) beside a qubit drawn as a spinning coin. MEASURE lands the coin on heads or tails,
@@ -74,8 +87,12 @@ export function QuantumBit({ dispatch }: { dispatch: Dispatch<Action> }) {
         <div className="qbit__stage">
           <div className={`qbit__hop ${flipping ? 'is-hop' : ''}`} key={`hop-${flips}`}>
             <div className={`qbit__coin ${coinClass}`} key={`coin-${flips}`}>
-              <span className="qbit__face qbit__face--heads">H</span>
-              <span className="qbit__face qbit__face--tails">T</span>
+              <span className="qbit__face qbit__face--heads">
+                <CoinIcon />
+              </span>
+              <span className="qbit__face qbit__face--tails">
+                <CoinIcon />
+              </span>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ import './QuantumRun.css'
 
 export const QRUN_COPY = {
   headline: 'Run it 100 times',
-  caption: "Same setup, different answers. That's how quantum works.",
+  caption: 'Same setup, different answers each time. Quantum results come as odds, not certainties.',
 } as const
 
 /** How long the bars take to fill, in ms. */

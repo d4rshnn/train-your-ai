@@ -1,8 +1,10 @@
 # Train Your AI
 
-An interactive exhibition piece for the COC × VJTI stall. A visitor picks 10 labelled cat photos, watches a conceptual
-neural network "learn" from them, then sees it predict on a picture it has never seen. A poor choice of examples makes it
-stumble and a better one fixes it, so the lesson is that training data matters.
+An interactive exhibition piece for the COC × VJTI stall. A short intro chapter (where AI, machine learning and deep
+learning fit, then two tiny quantum-bit demos) leads into the cat demo: a visitor picks 10 labelled cat photos, watches a
+conceptual neural network "learn" from them, then sees it guess on a picture it has never seen. A weak pick makes it
+stumble, a "what if" replay with different examples shows the difference side by side, and the lesson is that the
+examples (the training data) matter. There is one pick and no second round.
 
 This is an honest **simulation**: the network visual is conceptual and the predictions come from a hand-designed rule that
 rewards variety. Every screen says so. It runs fully offline: no backend, no network requests, fonts and photos are bundled.
@@ -38,20 +40,20 @@ Add these to the address, for example `http://localhost:5173/?autoplay`. Combine
 
 | URL | What it does |
 |---|---|
-| (no flag) | Visitors move through the story themselves: every screen plays, then a large **CLICK FOR NEXT** pill appears at the bottom centre (Space, Enter or Right Arrow work too). A click while a screen is still playing jumps to its finished state; the next click moves on. Nothing advances by itself. |
-| `?autoplay` | Runs the whole story by itself in a loop, with no input: start screen, "What is AI?", "Rules", the learner, the one pick (the worst achievable set, cards flying into the tray about 0.4 s apart), training, the new cat's guess, "why", the what-if replay with the better examples side by side, "it's everywhere", the payoff, a 5 s hold, then back to the start. It uses the real screens and animations and clicks the real buttons, including each screen's "Click for next" prompt after a short reading pause; only the clicks are scripted. One cycle takes about **2 minutes 20 seconds**. **Any real key press or click exits** autoplay and returns to the normal start screen with a clean state (that click is swallowed, so it does not also press START). The cursor is hidden while it runs and the idle reset is off. |
+| (no flag) | Visitors move through the story themselves: every screen plays, then a large **CLICK FOR NEXT** pill appears at the bottom centre (Space, Enter or Right Arrow work too). A click while a screen is still playing jumps to its finished state; the next click moves on. Nothing advances by itself (only the condensed what-if replay inside the what-if screen runs on its own). The title has a small **SKIP INTRO** link that goes straight to the cat demo. A full run is about **32 clicks** (23 with SKIP INTRO): 1 START, 3 on the AI layers, 2 on the qubit (MEASURE, next), 2 on the 100-run chart (RUN, next), 1 each for quantum + ML and the bridge, 1 rules, 4 on the learner, 10 picks, 1 TRAIN, 5 for training, test, why, what-if and everywhere, 1 RESTART. |
+| `?autoplay` | Runs the whole story by itself in a loop, with no input: title, the intro chapter (AI layers, a bit and a qubit with MEASURE, "run it 100 times" twice, quantum + ML, the bridge), rules, the learner, the one pick (the worst achievable set, cards flying into the tray about 0.4 s apart), training, the new cat's guess, "why", the what-if replay with the better examples side by side, "it's everywhere", the payoff, a 5 s hold, then back to the title. It uses the real screens and animations and clicks the real buttons, including each screen's "Click for next" prompt after a short reading pause; only the clicks are scripted. One cycle takes about **3 minutes 20 seconds**. **Any real key press or click exits** autoplay and returns to the normal title screen with a clean state (that click is swallowed, so it does not also press START). The cursor is hidden while it runs and the idle reset is off. |
 | `?autoplay&once` | Plays a single cycle and stops on the payoff screen (for screen recording). The RESTART button still works afterwards. |
 | `?kiosk` | Hides the mouse cursor. (`start-stall.bat` adds it.) |
 | `?quality=low` | Lighter rendering (fewer particles, no node halos, pixel ratio 1). **Remembered on this laptop**, so every later load keeps it. `?quality=high` remembers the full tier; `?quality=auto` forgets the choice. With nothing remembered, a machine with 2 or fewer CPU cores or 2 GB or less of memory starts light, and the app also drops to light by itself if frames are slow. |
 | `?fps` | Shows a small frame-rate readout under the network. |
-| `?dev` | Developer panel (bottom left): pick the worst or the good preset (optionally start training), jump to Training / Test / Why / What if / Payoff, stress-test the 300-particle cap, toggle quality. |
+| `?dev` | Developer panel (bottom left): pick the worst or the good preset (optionally start training), jump to any screen (AI layers, Qubit, Run 100, Quantum + ML, Bridge, Rules, Learner, Training, Test, Why, What if, Everywhere, Payoff), stress-test the 300-particle cap, toggle quality. |
 
 (`?autoplay&fast` shrinks the pauses to a tenth. It exists only to test the loop quickly.)
 Reduced motion: if the computer asks for reduced motion (Windows: Settings, Accessibility, Visual effects, Animation effects off), the animations are skipped and each screen shows its end state.
 
 ## Operator controls
 
-- **Idle reset:** after 60 s without input on any screen except attract, a "Still there?" prompt with a 10 s countdown appears; then the app resets silently to attract. Nothing from the previous group is kept (the picks, results, and the network's learned look are all wiped).
+- **Idle reset:** after 60 s without input on any screen except the title (waiting on a "Click for next" prompt counts as no input, and any click or key press resets the timer), a "Still there?" prompt with a 10 s countdown appears; then the app resets silently to attract. Nothing from the previous group is kept (the picks, results, and the network's learned look are all wiped).
 - **Hidden reset:** press **R** twice, or hold the "COC × VJTI" mark for 2 s, on any screen.
 - Right-click menus, pinch zoom and image dragging are blocked.
 
@@ -59,7 +61,7 @@ Reduced motion: if the computer asks for reduced motion (Windows: Settings, Acce
 
 - **Logos:** put `coc-logo.svg` and `vjti-logo.svg` (or `.png`) into `src/assets/brand/` and rebuild (`npm run build`). The top-left mark then shows them instead of the "COC × VJTI" text. If the files are missing the text is used.
 - **Accent colour:** change the three numbers in `--accent-rgb` at the top of `src/styles/tokens.css` (red, green, blue), then rebuild. Everything green on screen follows it. Check that the text on the accent button stays readable (`npm test` includes a contrast check).
-- **Swap an image:** replace the file in `src/assets/images/train/` or `test/` with a **512×512 square WebP** of the same name (crop so the animal is centred; keep it under about 60 KB). If the new photo shows a different colour, pose, fur, age, size or background, edit that card's line in `src/data/examples.ts` to match, because those attributes drive the prediction rule. Record the source and licence in `CREDITS.md`. Keep the black-cat test image (`test-01`) as a short-haired side-walking cat and keep every training card from being short-haired and side-walking, otherwise Round 1 will no longer fail on purpose. Then run `npm test` and `npm run build`.
+- **Swap an image:** replace the file in `src/assets/images/train/` or `test/` with a **512×512 square WebP** of the same name (crop so the animal is centred; keep it under about 60 KB). If the new photo shows a different colour, pose, fur, age, size or background, edit that card's line in `src/data/examples.ts` to match, because those attributes drive the prediction rule. Record the source and licence in `CREDITS.md`. Keep the black-cat test image (`test-01`) as a short-haired side-walking cat and keep every training card from being short-haired and side-walking, otherwise the weak pick will no longer stumble on purpose. Then run `npm test` and `npm run build`.
 - **Copy:** the screen texts live in each `src/screens/*` file; the payoff wording is in `src/features/payoff/content.ts`. `npm test` fails if wording that overclaims (for example "detector", "stores", "real trained model") is added.
 
 ## Layout of the code
@@ -69,7 +71,8 @@ Reduced motion: if the computer asks for reduced motion (Windows: Settings, Acce
 - `src/features/sim` the deterministic prediction rule (and its tests)
 - `src/features/network` the network visual and the training / test sequences
 - `src/features/cards`, `explain`, `payoff` cards and tray, the learner mosaic, payoff content
+- `src/features/quantum` the two quantum demos' random draws (real `Math.random`, tested)
 - `src/features/map` the memory map (SVG) and `src/features/sim/mapLayout.ts` its deterministic layout (same numbers as the simulation, so it cannot disagree with the result)
-- `src/screens` one folder per screen
+- `src/screens` one folder per screen (intro: AiLayers, QuantumBit, QuantumRun, QuantumMeets, Bridge; then Rules, Learner, Choose, Training, Test, Why, WhatIf, Everywhere, Payoff); `src/components/NextPrompt.tsx` is the shared "Click for next" pill
 - `src/data/examples.ts` the 28 example photos and their attributes
 - `scripts/serve.ps1`, `start-stall.bat` the offline stall launcher

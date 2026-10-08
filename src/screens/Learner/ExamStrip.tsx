@@ -34,16 +34,22 @@ export function ExamStrip() {
   return (
     <div className="exam">
       <svg className="exam__svg" viewBox="0 0 1000 330" aria-hidden="true">
-        {/* desk */}
-        <path className="exam__desk" d="M10 262h980M40 262v60M960 262v60" />
+        {/* desk and chair */}
+        <path className="exam__desk" d="M220 262H990M240 262V326M960 262V326" />
+        <path className="exam__chair" d="M82 294H152M86 294V200M92 294V326M146 294V326" />
 
-        {/* student, seen from the side, facing the questions */}
+        {/* student, seated side-on: head, neck and shoulders joined, one arm on the desk holding a pencil */}
         <g className="exam__student">
-          <circle cx="150" cy="116" r="30" />
-          <path d="M96 262c0-62 24-92 54-92s54 30 54 92" />
-          <path d="M196 214l50 30" />
-          <path d="M146 112v.1M168 112v.1" className="exam__eyes" />
-          <path d="M148 130h14" />
+          <circle cx="121" cy="122" r="26" />
+          <path d="M114 147V178M128 147V178" />
+          <path d="M102 280V206C102 190 110 181 122 181C134 181 141 190 141 206V280" />
+          <path d="M100 278H196a8 8 0 0 1 0 16H100" />
+          <path d="M194 294V326M208 294V326M194 326h30" />
+          <path d="M134 196L172 234L226 254" />
+          <circle cx="229" cy="256" r="4.5" />
+          <path d="M231 254L254 232M254 232l3-6" />
+          <path d="M139 118v.1" className="exam__eyes" />
+          <path d="M144 124l5 3h-5M134 136h9" />
         </g>
 
         {/* the practice stack: same shape, one after another */}
@@ -61,13 +67,20 @@ export function ExamStrip() {
         </g>
 
         {/* the question mark over the student's head */}
-        <g transform="translate(150 54)">
+        <g transform="translate(121 58)">
           <g className="exam__mark" style={d(MARK_AT)}>
             <path d="M-13 -8C-13 -30 15 -30 15 -8C15 4 1 6 1 20" />
             <circle cx="1" cy="34" r="2.6" />
           </g>
         </g>
       </svg>
+
+      <span className="exam__label" style={{ left: 183 + 525, top: 290, animationDelay: `${CARD_AT[0]}s` }}>
+        Practice
+      </span>
+      <span className="exam__label is-exam" style={{ left: 183 + 838, top: 290, animationDelay: `${NEW_AT}s` }}>
+        Exam: a new type
+      </span>
 
       <p className="exam__caption">{EXAM_COPY.caption}</p>
       <p className="exam__bridge">{EXAM_COPY.bridge}</p>

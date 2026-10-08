@@ -28,6 +28,12 @@
   animation: exam-in 500ms var(--ease-out) both;
 }
 
+.exam__svg .exam__chair {
+  stroke: var(--line);
+  stroke-width: 3;
+  animation: exam-in 500ms var(--ease-out) both;
+}
+
 .exam__student {
   animation: exam-in 600ms 100ms var(--ease-out) both;
 }
@@ -129,6 +135,23 @@
   }
 }
 
+/* small mono labels over the cards */
+.exam__label {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  animation: exam-in 500ms var(--ease-out) both;
+}
+
+.exam__label.is-exam {
+  color: var(--warn);
+}
+
 /* caption, then the bridge to AI */
 .exam__caption {
   position: absolute;
@@ -164,6 +187,7 @@
   .exam__new,
   .exam__mark,
   .exam__caption,
+  .exam__label,
   .exam__bridge {
     animation: none;
   }
